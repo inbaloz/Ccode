@@ -3,7 +3,6 @@
 #include "FindInteracting.h"
 #include "Move.h"
 #include <math.h>
-
 // input:
 
 
@@ -13,6 +12,7 @@ void SlidingMotion(double* RI, double xStep, double yStep, double amountOfSteps,
 {
 	int i, j;
 	double effectiveNum;
+	double currentInteracting;
 	// The sliding (Move) is in the end because when i = 0 we want
 	// the start x,y, so we don't want to slide by the regular step.
 	for (i = 0; i < amountOfSteps; i++)
@@ -23,11 +23,12 @@ void SlidingMotion(double* RI, double xStep, double yStep, double amountOfSteps,
 			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) );
 			if (effectiveNum > NP)
 			{
-				RI[i] = RI[i] + effectiveNum * FindInteracting(tube[j], xShift, yShift);
+				currentInteracting = FindInteracting(tube[j], xShift, yShift);
+				RI[i] = RI[i] + effectiveNum * currentInteracting;
 			}
 		}
-		Move(tube, tubeN, xStep, yStep, 0);
-		xShift = xShift + xStep;
-		yShift = yShift + yStep;
+		// Move(tube, tubeN, xStep, yStep, 0);
+		xShift = xShift - xStep;
+		yShift = yShift - yStep;
 	}
 }

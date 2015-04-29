@@ -4,6 +4,7 @@
 #include "FindInteracting.h"
 #include <math.h>
 
+
 // input: Array for RI values, rotation step, amount of steps, the tube,
 // amount of atoms in the tube, the angle between tube axis and y axis, 
 // x,y shifts of the center of the tube from (0,0).
@@ -19,6 +20,7 @@ void RotationMotion(double* RI, double rotationStep, int amountOfSteps,
 {
 	int i, j;
 	double effectiveNum;
+	double currentInteracting;
 	// The rotation (RotateShift) is in the end because when i = 0 we want
 	// the start angle, so we don't want to rotate by the regular step.
 	for (i = 0; i < amountOfSteps; i++)
@@ -29,7 +31,8 @@ void RotationMotion(double* RI, double rotationStep, int amountOfSteps,
 			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) );
 			if (effectiveNum > NP)
 			{
-				RI[i] = RI[i] + effectiveNum * FindInteracting(tube[j], xShift, yShift);
+				currentInteracting = FindInteracting(tube[j], xShift, yShift);
+				RI[i] = RI[i] + effectiveNum * currentInteracting;
 			}
 		}
 		RotateShift(tube, tubeN, rotationStep, shiftAngle, ILD + radius);

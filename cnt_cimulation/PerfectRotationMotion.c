@@ -4,6 +4,7 @@
 #include "FindInteracting.h"
 #include <math.h>
 
+
 // input: Array for RI values, x starting value, y starting value, x step,
 // y step, rotation step, amount of steps, the tube, amount of atoms in the
 // tube, the angle between tube axis and y axis.
@@ -17,7 +18,8 @@
 // the tube has been already rotated by rotationStart.
 
 void PerfectRotationMotion(double* RI, double xStart, double yStart, double xStep, double yStep,
-							double rotationStep, double amountOfSteps, Atom* tube, int tubeN, double radius, double shiftAngle)
+							double rotationStep, double amountOfSteps, 
+							Atom* tube, int tubeN, double radius, double shiftAngle)
 {
 	int i, j;
 	double effectiveNum;

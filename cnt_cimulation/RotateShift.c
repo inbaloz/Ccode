@@ -24,7 +24,7 @@ void RotateShift(Atom* array, int arraySize, double angle, double shiftAngle, do
 {
 	if (angle != 0)
 	{
-		Move(array, arraySize, 0, 0, -hight);	
+		Move(array, arraySize, 0, 0, -hight);
 		Rotate(array, arraySize, 3, -shiftAngle);
 		Rotate(array, arraySize, 2, angle);
 		Rotate(array, arraySize, 3, shiftAngle);

@@ -11,7 +11,7 @@
 #define HORIZS	(BL * 1.5)		// The horizontal shift between atom layers
 #define A		(BL * sqrt(3))  // The length of a1 and a2 lattice vectors 
 #define NAN		(0/0)			// Nan
-#define ILD		3.33			// Interlayer difference
+#define ILD		3.33			// Interlayer difference in Angstroms // Inbal - I found 3.35
 #define RND		(ILD + 1.53)	// Maximum hight that isn't negligible
 #define NP		(0.01)			// Negligible part;
 #define RCG		(0.5 * BL)		// Radius of graphene atom (for RI calculations)

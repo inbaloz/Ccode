@@ -4,7 +4,7 @@
 #include <malloc.h>
 
 // input: a centered tube unitcell, amount of atoms, amount of duplications,
-// unitcell length.
+// unitcell length (aVecLength(T)).
 // output: a centered duplicate of the tube with duplicateN unitcells.
 Atom * DuplicateTube(Atom* tubeUnit, int tubeUnitN, int duplicateN, double tubeLength)
 {

@@ -50,7 +50,7 @@
  *
  *	3. Sliding: Start x-y, end x-y, amount of steps.
  *
- *	4. Spinning without sliding: start angle, end angle,
+ *	4. Rotation without sliding: start angle, end angle,
  *	amount of steps, start x-y.
  *
  */
@@ -102,6 +102,7 @@ int main(int argc, char *argv[])
 	double yStep;			// y Step...				(type 3*, 4*)
 	double* slideValues;	// Slide values				(type 3*, 4*)
 	double slideStep;		// Slide step values		(type 3*, 4*)
+	double tot_dist;		// the total distance travelled by the tube (type 4)
 	Atom* tubeUnit;			// The tube's unitcell
 	int tubeUnitN;			// Number of atoms in the tube's unitcell
 	double radius;			// The tube's radius
@@ -196,8 +197,8 @@ int main(int argc, char *argv[])
 	yShift = input.yShift;
 	rotSpinStart = input.rotSpinStart;
 	rotSpinEnd = input.rotSpinEnd;
-	rotSpinStart = -90 * M_PI / 180;
-	rotSpinEnd = 90 * M_PI / 180;
+	//rotSpinStart = -90 * M_PI / 180;
+	//rotSpinEnd = 90 * M_PI / 180;
 	amountOfSteps = input.amountOfSteps;
 	xStart = input.xStart;
 	yStart = input.yStart;
@@ -216,7 +217,6 @@ int main(int argc, char *argv[])
 
 	// The function needs the future unitcell borders (before rotating and moving)
 	// to create a lattice in a suitable size:
-
 	{
 	double xMin = - aVecLength(T) * sin( (M_PI / 6) - teta);
 	double xMax = aVecLength(Ch) * cos((M_PI / 6) - teta);
@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
 	tubeN = tubeUnitN * unitcellN;
 	// Free the unit tube, it isn't needed anymore:
 	free(tubeUnit);
-	// Initially rotating and spinning the tube as requested.
+	// Initially rotating and spinning the tube as requested (around z axis).
 	Rotate(tube, tubeN, 3, shiftAngle);
 	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
 	// This lattice was used to create the tube. Now we free it for later reuse:
@@ -241,7 +241,8 @@ int main(int argc, char *argv[])
 
 //********************** Step 4 - Normalizie RI ********************************
 
-	effTubeN = EffectiveNum(tube, tubeN, ILD, RND);
+	effTubeN = EffectiveNum(tube, tubeN, ILD, RND); // Inbal - how is the negligble
+													// part calculated? What is the cutoff?
 	RIMin = effTubeN * MIN(M_PI * pow(RCG,2), M_PI * pow(RCC,2)) / 2;
 	RIMax = RIMin * 2;
 	
@@ -249,7 +250,7 @@ int main(int argc, char *argv[])
 
 	switch(motionType)
 	{
-	case 1:
+	case 1: // Rotating: start angle, end angle, amount of steps.
 		// Defining data arrays:
 		RI = malloc(amountOfSteps * sizeof(double));
 		rotSpinValues = malloc(amountOfSteps * sizeof(double));
@@ -270,7 +271,7 @@ int main(int argc, char *argv[])
 		free(rotSpinValues);
 		free(RI);
 		break;
-	case 2:
+	case 2: // Spinning: Start angle, end angle, amount of steps.
 		// Defining data arrays:
 		RI = malloc(amountOfSteps * sizeof(double));
 		rotSpinValues = malloc(amountOfSteps * sizeof(double));
@@ -291,7 +292,7 @@ int main(int argc, char *argv[])
 		free(rotSpinValues);
 		free(RI);
 		break;
-	case 3:
+	case 3: // Sliding: Start x-y, end x-y, amount of steps.
 		// Defining data arrays:
 		RI = malloc(amountOfSteps * sizeof(double));
 		slideValues = malloc(amountOfSteps * sizeof(double));
@@ -311,16 +312,28 @@ int main(int argc, char *argv[])
 		free(slideValues);
 		free(RI);
 		break;
-	case 4:
+	case 4: // Rotation without sliding (rolling): start angle, end angle, amount of steps, start x-y.
 		// Defining data arrays:
 		RI = malloc(amountOfSteps * sizeof(double));
 		slideValues = malloc(amountOfSteps * sizeof(double));
 		// Calculating constants and rotSpinValues:
 		rotSpinStep = ( (rotSpinEnd - rotSpinStart) / (amountOfSteps - 1) );
+
+		//--------------------------------------------
+        // I tried adding to the code - hope it's ok
+
+        tot_dist = (rotSpinEnd - rotSpinStart) * radius;
+        xStep = ( (tot_dist * cos(shiftAngle)) / (amountOfSteps - 1) );
+        yStep = ( (tot_dist * sin(shiftAngle)) / (amountOfSteps - 1) );
+
+        //--------------------------------------------
+
 		slideStep = sqrt( (xStep * xStep) + (yStep * yStep) );
-		xStep = slideStep * radius * cos(shiftAngle);
-		yStep = slideStep * radius * sin(shiftAngle);
-		rotSpinStep = ( (rotSpinEnd - rotSpinStart) / (amountOfSteps - 1) );
+
+		//xStep = slideStep * radius * cos(shiftAngle); // why not multiply by rotSpinStep?
+		//yStep = slideStep * radius * sin(shiftAngle);
+		rotSpinStep = ( (rotSpinEnd - rotSpinStart) / (amountOfSteps - 1) ); // why do it twice?
+
 		for (i = 0; i < amountOfSteps; i++)
 		{
 			slideValues[i] = slideStep * i;

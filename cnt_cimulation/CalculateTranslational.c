@@ -9,7 +9,7 @@
 // and they aren't both 0).
 aVec CalculateTranslational(aVec Ch)
 {
-	int temp, n, m;
+	int n;
 	aVec T;
 	n = ABS(Ch.m);
 	n = gcd(Ch.n,n);
