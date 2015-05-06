@@ -24,6 +24,7 @@
 #include "SpinningMotion.h"
 #include "TwodDataToFile.h"
 
+#include "FindInteracting.h"
 
 // This program creates a nanotube and lattice to preform
 // simulations using the RI (registry index) method.
@@ -240,11 +241,44 @@ int main(int argc, char *argv[])
 	free(lattice);
 
 //********************** Step 4 - Normalizie RI ********************************
-
-	effTubeN = EffectiveNum(tube, tubeN, ILD, RND); // Inbal - how is the negligble
-													// part calculated? What is the cutoff?
+												
+	effTubeN = EffectiveNum(tube, tubeN, ILD, RND); 
 	RIMin = effTubeN * MIN(M_PI * pow(RCG,2), M_PI * pow(RCC,2)) / 2;
 	RIMax = RIMin * 2;
+
+	Rotate(tube, tubeN, 3, -shiftAngle + M_PI/6 - teta); // get to AA
+	double AAshiftx = 0;
+	double AAshifty = 0;
+
+
+    //------------------ calculating RImax -----------------------------
+	double effectiveNum, currentInteracting;
+	RIMax = 0;
+	for (i = 0; i < tubeN; i++)
+	{
+		effectiveNum = exp( EXPNORM * (ILD - tube[i].z) / (RND - ILD) );
+		if (effectiveNum > NP)
+		{
+			currentInteracting = FindInteracting(tube[i], AAshiftx, AAshifty);
+			RIMax = RIMax + effectiveNum * currentInteracting;
+		}
+	}
+
+	//------------------- calculating RIMin ------------------------------
+	RIMin = 0;
+	double ABshiftx = AAshiftx - 1.25*BL;
+	for (i = 0; i < tubeN; i++)
+	{
+		effectiveNum = exp( EXPNORM * (ILD - tube[i].z) / (RND - ILD) );
+		if (effectiveNum > NP)
+		{
+			currentInteracting = FindInteracting(tube[i], ABshiftx, AAshifty);
+			RIMin = RIMin + effectiveNum * currentInteracting;
+		}
+	}
+
+	Rotate(tube, tubeN, 3, -(-shiftAngle + M_PI/6 - teta));
+
 	
 //********************** Step 5 - Calculate RI *********************************
 
@@ -300,6 +334,7 @@ int main(int argc, char *argv[])
 		xStep = ( (xEnd - xStart) / (amountOfSteps - 1) );
 		yStep = ( (yEnd - yStart) / (amountOfSteps - 1) );
 		slideStep = sqrt( (xStep * xStep) + (yStep * yStep) );
+		printf("slidestep: %e\n", slideStep);
 		for (i = 0; i < amountOfSteps; i++)
 		{
 			slideValues[i] = slideStep * i;
