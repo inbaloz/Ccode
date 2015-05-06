@@ -8,8 +8,8 @@
 double CalculateIntersection(Atom atomTube, Atom atomLattice)
 {
 	double d = sqrt(pow(atomTube.x - atomLattice.x, 2) + pow(atomTube.y - atomLattice.y, 2));
-	double r1 = RCC;
-	double r2 = RCG;
+	double r1 = RCCNT;
+	double r2 = RCGRAPHENE;
 	double intersection;
 	// Too far:
 	if (d > r1 + r2)

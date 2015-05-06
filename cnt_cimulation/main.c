@@ -77,6 +77,11 @@
  *
  *
  */
+
+double LATTICE_BL = 1.44;
+double TUBE_BL = 1.44;
+double ILD = 3.33;
+
 int main(int argc, char *argv[])
 {
 	int i;					// Loop counter.
@@ -103,7 +108,7 @@ int main(int argc, char *argv[])
 	double yStep;			// y Step...				(type 3*, 4*)
 	double* slideValues;	// Slide values				(type 3*, 4*)
 	double slideStep;		// Slide step values		(type 3*, 4*)
-	double tot_dist;		// the total distance travelled by the tube (type 4)
+	double totDist;		// the total distance travelled by the tube (type 4)
 	Atom* tubeUnit;			// The tube's unitcell
 	int tubeUnitN;			// Number of atoms in the tube's unitcell
 	double radius;			// The tube's radius
@@ -114,7 +119,7 @@ int main(int argc, char *argv[])
 	int latticeN;			// The number of atoms in the lattice
 	double RIMin;			// The minimum surface
 	double RIMax;			// The maximum surface
-	double effTubeN;		// The effective number of atoms (normalized by hight)	
+	// double effTubeN;		// The effective number of atoms (normalized by hight)	
 	double* RI;				// The registry index data.
 							// type: used to mark what variables are used to
 							// each type of motion. If the number is marked
@@ -229,6 +234,7 @@ int main(int argc, char *argv[])
 	}
 	// Making the tube's unitcell from the lattice:
 	tubeUnit = CutUnitcell(lattice, latticeN, Ch, T, (M_PI / 6) - teta, tubeUnitN);
+
 	// Duplicating the unitcell:
 	tube = DuplicateTube(tubeUnit, tubeUnitN, unitcellN, aVecLength(T));
 	tubeN = tubeUnitN * unitcellN;
@@ -242,9 +248,9 @@ int main(int argc, char *argv[])
 
 //********************** Step 4 - Normalizie RI ********************************
 												
-	effTubeN = EffectiveNum(tube, tubeN, ILD, RND); 
-	RIMin = effTubeN * MIN(M_PI * pow(RCG,2), M_PI * pow(RCC,2)) / 2;
-	RIMax = RIMin * 2;
+	// effTubeN = EffectiveNum(tube, tubeN, ILD, RND); 
+	// RIMin = effTubeN * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
+	// RIMax = RIMin * 2;
 
 	Rotate(tube, tubeN, 3, -shiftAngle + M_PI/6 - teta); // get to AA
 	double AAshiftx = 0;
@@ -266,7 +272,7 @@ int main(int argc, char *argv[])
 
 	//------------------- calculating RIMin ------------------------------
 	RIMin = 0;
-	double ABshiftx = AAshiftx - 1.25*BL;
+	double ABshiftx = AAshiftx - 1.25*LATTICE_BL;
 	for (i = 0; i < tubeN; i++)
 	{
 		effectiveNum = exp( EXPNORM * (ILD - tube[i].z) / (RND - ILD) );
@@ -334,7 +340,6 @@ int main(int argc, char *argv[])
 		xStep = ( (xEnd - xStart) / (amountOfSteps - 1) );
 		yStep = ( (yEnd - yStart) / (amountOfSteps - 1) );
 		slideStep = sqrt( (xStep * xStep) + (yStep * yStep) );
-		printf("slidestep: %e\n", slideStep);
 		for (i = 0; i < amountOfSteps; i++)
 		{
 			slideValues[i] = slideStep * i;
@@ -357,9 +362,9 @@ int main(int argc, char *argv[])
 		//--------------------------------------------
         // I tried adding to the code - hope it's ok
 
-        tot_dist = (rotSpinEnd - rotSpinStart) * radius;
-        xStep = ( (tot_dist * cos(shiftAngle)) / (amountOfSteps - 1) );
-        yStep = ( (tot_dist * sin(shiftAngle)) / (amountOfSteps - 1) );
+        totDist = (rotSpinEnd - rotSpinStart) * radius;
+        xStep = ( (totDist * cos(shiftAngle)) / (amountOfSteps - 1) );
+        yStep = ( (totDist * sin(shiftAngle)) / (amountOfSteps - 1) );
 
         //--------------------------------------------
 

@@ -20,10 +20,10 @@ int LatticeCreator(Atom** lattice, double xMin, double yMin, double xMax, double
 	int latticeN;				
 	int count = 0; 				// Counter for the atoms later on.
 
-	minLayer	 = 2 * (int)( (yMin / HIGHT) - 1.0 );
-	maxLayer	 = 2 * (int)( (yMax / HIGHT) + 1.0 );
-	startLayer	 = (int)( (xMin / HORIZD) - 1.0 );
-	endLayer	 = (int)( ( (xMax + HORIZS) / HORIZD) + 1.0 ); 	// The end of layer condition
+	minLayer	 = 2 * (int)( (yMin / LATTICE_HIGHT) - 1.0 );
+	maxLayer	 = 2 * (int)( (yMax / LATTICE_HIGHT) + 1.0 );
+	startLayer	 = (int)( (xMin / LATTICE_HORIZD) - 1.0 );
+	endLayer	 = (int)( ( (xMax + LATTICE_HORIZS) / LATTICE_HORIZD) + 1.0 ); 	// The end of layer condition
 																// should be satisfied even for
 																// the shifted layers.
 	latticeN = 2 * (maxLayer - minLayer + 1) * (endLayer - startLayer + 1);
@@ -36,20 +36,22 @@ int LatticeCreator(Atom** lattice, double xMin, double yMin, double xMax, double
 	// To create the lattice we are scanning the hight (y axis),
 	// in each hight layer we are placing the atoms in pairs.
 	// Note that in each odd layer there needs to be a shift
-	// in the horizontal axis (x axis) by HORIZS equals 1.5BL.
+	// in the horizontal axis (x axis) by LATTICE_HORIZS equals 1.5LATTICE_BL.
 	for (i = minLayer; i <= maxLayer; i++)
 	{
 		for (j = startLayer; j <= endLayer; j++)
 		{
 			// First atom in the pair:
-			(*lattice)[count].y = i * HIGHT / 2;
-			(*lattice)[count].x = j * HORIZD - ( (ABS(i) % 2) * (HORIZS) );
+			(*lattice)[count].y = i * LATTICE_HIGHT / 2;
+			(*lattice)[count].x = j * LATTICE_HORIZD - ( (ABS(i) % 2) * (LATTICE_HORIZS) );
 			(*lattice)[count].z = 0;
+			(*lattice)[count].type = 'C';
 			count++;
 			// Second atom in the pair:
-			(*lattice)[count].y = i * HIGHT / 2;
-			(*lattice)[count].x = j * HORIZD + BL - ( (ABS(i) % 2) * (HORIZS) );
+			(*lattice)[count].y = i * LATTICE_HIGHT / 2;
+			(*lattice)[count].x = j * LATTICE_HORIZD + LATTICE_BL - ( (ABS(i) % 2) * (LATTICE_HORIZS) );
 			(*lattice)[count].z = 0;
+			(*lattice)[count].type = 'C';
 			count++;
 		}
 	}

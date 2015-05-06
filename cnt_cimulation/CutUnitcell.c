@@ -35,7 +35,7 @@
 Atom* CutUnitcell(Atom* lattice, int latticeN, aVec Ch, aVec T, double shiftAngle, int cutLatticeN)
 {
 	int count = 0;
-	int i, j;				// Counters for loops
+	int i;					// Counter for loop
 	int missingAtomsN;		// Number of missing atoms (part 3)
 	double pWorst;			// Potentially worst atom that fits (part 3)
 	double xMax, yMax;		// Rectangle borders (part 2)
