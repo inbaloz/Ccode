@@ -36,7 +36,7 @@
  *
  *	Step 3: Create the tube
  *
- *	Step 4: Normalizie RI
+ *	Step 4: Normalize RI
  *
  *	Step 5: Calculate RI
  *
@@ -87,6 +87,9 @@ int main(int argc, char *argv[])
 	int i;					// Loop counter.
 	int runOrGui;			// 1 for no gui, and 0 for gui.
 	char prefix[80];		// File prefixes.
+
+//-----------------from configuration ----------------------------
+
 	int motionType;			// Type of tube motion.
 	int unitcellN;			// Amount of tube unitcells.
 	aVec Ch, T;				// Chirality and translational vectors.
@@ -104,11 +107,17 @@ int main(int argc, char *argv[])
 	double yStart;			// Starting y.				(type 3, 4)
 	double xEnd;			// Ending x.				(type 3)
 	double yEnd;			// Ending y.				(type 3)
+	double percentTruncated;// amount of Truncated tube from the end, in a right-angle triangular fashion.
+	int tubeType = 0;		// tube type: 	 0 for CNT, 1 for BN.
+	int latticeType = 0;	// lattice type: 0 for graphene, 1 for BN.
+
+//-----------------------------------------------------------------------------
+
 	double xStep;			// x Step...				(type 3*, 4*)
 	double yStep;			// y Step...				(type 3*, 4*)
 	double* slideValues;	// Slide values				(type 3*, 4*)
 	double slideStep;		// Slide step values		(type 3*, 4*)
-	double totDist;		// the total distance travelled by the tube (type 4)
+	double totDist;			// the total distance travelled by the tube (type 4)
 	Atom* tubeUnit;			// The tube's unitcell
 	int tubeUnitN;			// Number of atoms in the tube's unitcell
 	double radius;			// The tube's radius
@@ -129,66 +138,23 @@ int main(int argc, char *argv[])
 
 //********************** Step 1 - Recieve input data ***************************
 	
-	// Determine automatic or non-automatic run:
+	// Load data
 	switch (argc)
 	{
 	case 1:
-		// We assume that the simplest case is running with a gui
-		// while using the default prefix.
-		runOrGui = 0;
+		// Load default data
 		strcpy(prefix, "Default");
 		break;
 	case 2:
-		sscanf(argv[1], "%d", &runOrGui);
-		strcpy(prefix, "Default");
-		break;
-	case 3:
-		sscanf(argv[1], "%d", &runOrGui);
-		strcpy(prefix, argv[2]);
-		break;
-	default:
-		printf("Too many input parameters (max 2).\n");
-		exit(0);
-	}
-
-	// Load data, load gui (if needed) and save data (if needed):
-	switch (runOrGui)
-	{
-	case -1:
-		// Create an empty data file (all values = 0):
-		input.Ch.n = 0;
-		input.Ch.m = 0;
-		input.unitcellN = 0;
-		input.shiftAngle = 0;
-		input.rotateAngle = 0;
-		input.xShift = 0;
-		input.yShift = 0;
-		input.rotSpinStart = 0;
-		input.rotSpinEnd = 0;
-		input.amountOfSteps = 0;
-		input.xStart = 0;
-		input.yStart = 0;
-		input.xEnd = 0;
-		input.yEnd = 0;
-		SaveInPar(input, "Empty");
-		exit(0);
-		break;
-	case 0:
-		// Load data:
-		input = LoadInPar(prefix);	
-		// Load gui:
-		input = CLI(input);
-		// Save final data:
-		SaveInPar(input, prefix);
-		break;
-	case 1:
-		// Load data without gui:
-		input = LoadInPar(prefix);
+		// Load data of the file name:
+		strcpy(prefix, argv[1]);
 		break;
 	default:
 		printf("Not a valid 1st argument, please enter -1 or 0 or 1.\n");
+		exit(0);
 		break;
 	}
+	input = LoadInPar(prefix);
 
 
 // The values are duplicated for extra readability:
@@ -203,13 +169,15 @@ int main(int argc, char *argv[])
 	yShift = input.yShift;
 	rotSpinStart = input.rotSpinStart;
 	rotSpinEnd = input.rotSpinEnd;
-	//rotSpinStart = -90 * M_PI / 180;
-	//rotSpinEnd = 90 * M_PI / 180;
 	amountOfSteps = input.amountOfSteps;
 	xStart = input.xStart;
 	yStart = input.yStart;
 	xEnd = input.xEnd;
 	yEnd = input.yEnd;
+	percentTruncated = input.percentTruncated;
+	tubeType = input.tubeType;
+	latticeType = input.latticeType;
+	
 
 
 //********************** Step 2 - Calculate tube parameters ********************
@@ -230,7 +198,7 @@ int main(int argc, char *argv[])
 	double yMax = ( aVecLength(Ch) * sin((M_PI / 6) - teta) + aVecLength(T) * cos( (M_PI / 6) - teta));
 	
 	// Creating the lattice (to make a tube of):
-	latticeN = LatticeCreator(&lattice,	xMin, yMin, xMax, yMax);
+	latticeN = LatticeCreator(&lattice,	xMin, yMin, xMax, yMax, tubeType);
 	}
 	// Making the tube's unitcell from the lattice:
 	tubeUnit = CutUnitcell(lattice, latticeN, Ch, T, (M_PI / 6) - teta, tubeUnitN);
@@ -269,6 +237,8 @@ int main(int argc, char *argv[])
 			RIMax = RIMax + effectiveNum * currentInteracting;
 		}
 	}
+
+	printf("RI max: %d\n", RIMax);
 
 	//------------------- calculating RIMin ------------------------------
 	RIMin = 0;

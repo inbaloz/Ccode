@@ -82,6 +82,9 @@ typedef struct
 	double yStart;			// Starting y.				(type 3, 4)
 	double xEnd;			// Ending x.				(type 3)
 	double yEnd;			// Ending y.				(type 3)
+	double percentTruncated;// amount of Truncated tube from the end, in a right-angle triangular fashion.
+	int tubeType;			// tube type: 	 0 for CNT, 1 for BN.
+	int latticeType;		// lattice type: 0 for graphene, 1 for BN.
 } InPar;
 
 #endif /* On the #ifndef __CONSTANTS_AND_LIBRARIES__ */
