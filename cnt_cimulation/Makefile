@@ -6,6 +6,8 @@ C_FILES = \
 	CLI.c \
 	CutUnitcell.c \
 	DuplicateTube.c \
+	CutLastPartOfTube.c \
+	FixGapsInTube.c \
 	EffectiveNum.c \
 	FindInteracting.c \
 	gcd.c \
@@ -23,6 +25,7 @@ C_FILES = \
 	SlidingMotion.c \
 	SpinningMotion.c \
 	TwodDataToFile.c \
+	TubeToFile.c \
 
 H_FILES = \
 	ArrayToFile.h \
@@ -33,6 +36,8 @@ H_FILES = \
 	Constants_and_libraries.h \
 	CutUnitcell.h \
 	DuplicateTube.h \
+	CutLastPartOfTube.h \
+	FixGapsInTube.h \
 	EffectiveNum.h \
 	FindInteracting.h \
 	gcd.h \
@@ -49,6 +54,7 @@ H_FILES = \
 	SlidingMotion.h \
 	SpinningMotion.h \
 	TwodDataToFile.h \
+	TubeToFile.h \
 
 O_FILES = ${C_FILES:.c=.o} # Take the .c files and replace with .o
 

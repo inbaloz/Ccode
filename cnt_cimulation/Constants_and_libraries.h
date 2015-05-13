@@ -37,11 +37,11 @@
 
 #define WRITE	"w"				// Writing type
 #define PT		0				// Print title for data files? (1 = yes, 0 = no)
+#define DUMMY_TYPE '\xff'		// dummy type for dummy atoms - atoms we want to earase eventually
 
 //**************** Useful *********************
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
 #define ABS(X)   ((X) >= 0  ? (X) : -(X))
-
 
 //**************** Globals *********************
 // tube BL, lattice BL

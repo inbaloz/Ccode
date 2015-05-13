@@ -11,6 +11,7 @@
 #include "CLI.h"
 #include "CutUnitcell.h"
 #include "DuplicateTube.h"
+#include "CutLastPartOfTube.h"
 #include "EffectiveNum.h"
 #include "gcd.h"
 #include "LatticeCreator.h"
@@ -23,6 +24,7 @@
 #include "SlidingMotion.h"
 #include "SpinningMotion.h"
 #include "TwodDataToFile.h"
+#include "TubeToFile.h"
 
 #include "FindInteracting.h"
 
@@ -87,6 +89,7 @@ int main(int argc, char *argv[])
 	int i;					// Loop counter.
 	int runOrGui;			// 1 for no gui, and 0 for gui.
 	char prefix[80];		// File prefixes.
+	char tubeFile[86];		// Tube file name
 
 //-----------------from configuration ----------------------------
 
@@ -196,7 +199,6 @@ int main(int argc, char *argv[])
 	double xMax = aVecLength(Ch) * cos((M_PI / 6) - teta);
 	double yMin = 0;
 	double yMax = ( aVecLength(Ch) * sin((M_PI / 6) - teta) + aVecLength(T) * cos( (M_PI / 6) - teta));
-	
 	// Creating the lattice (to make a tube of):
 	latticeN = LatticeCreator(&lattice,	xMin, yMin, xMax, yMax, tubeType);
 	}
@@ -206,6 +208,14 @@ int main(int argc, char *argv[])
 	// Duplicating the unitcell:
 	tube = DuplicateTube(tubeUnit, tubeUnitN, unitcellN, aVecLength(T));
 	tubeN = tubeUnitN * unitcellN;
+
+	// cut last part of tube if requested
+	if (percentTruncated != 0.0) {
+		CutLastPartOfTube(tube, &tubeN, percentTruncated);
+	}
+	sprintf(tubeFile, "%s - tube", prefix);
+	TubeToFile(tube, tubeN, tubeFile);
+	printf("number of atoms: %d\n",tubeN);
 	// Free the unit tube, it isn't needed anymore:
 	free(tubeUnit);
 	// Initially rotating and spinning the tube as requested (around z axis).
@@ -215,17 +225,20 @@ int main(int argc, char *argv[])
 	free(lattice);
 
 //********************** Step 4 - Normalizie RI ********************************
-												
-	// effTubeN = EffectiveNum(tube, tubeN, ILD, RND); 
-	// RIMin = effTubeN * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
-	// RIMax = RIMin * 2;
+
+	double effTubeN;
+	effTubeN = EffectiveNum(tube, tubeN, ILD, RND); 
+	RIMin = effTubeN * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
+	RIMax = RIMin * 2;
+	printf("old rimax rimin: %lf, %lf", RIMax, RIMin);
 
 	Rotate(tube, tubeN, 3, -shiftAngle + M_PI/6 - teta); // get to AA
 	double AAshiftx = 0;
 	double AAshifty = 0;
 
-
+	printf("percentTruncated: %lf\n", percentTruncated);
     //------------------ calculating RImax -----------------------------
+	
 	double effectiveNum, currentInteracting;
 	RIMax = 0;
 	for (i = 0; i < tubeN; i++)
@@ -238,7 +251,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	printf("RI max: %d\n", RIMax);
+	printf("RI max: %lf\n", RIMax);
 
 	//------------------- calculating RIMin ------------------------------
 	RIMin = 0;
@@ -252,6 +265,8 @@ int main(int argc, char *argv[])
 			RIMin = RIMin + effectiveNum * currentInteracting;
 		}
 	}
+
+	printf("RI min: %lf\n", RIMin);
 
 	Rotate(tube, tubeN, 3, -(-shiftAngle + M_PI/6 - teta));
 
