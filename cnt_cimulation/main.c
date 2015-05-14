@@ -215,11 +215,14 @@ int main(int argc, char *argv[])
 	free(lattice);
 
 //********************** Step 4 - Normalizie RI ********************************
-												
-	// effTubeN = EffectiveNum(tube, tubeN, ILD, RND); 
-	// RIMin = effTubeN * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
-	// RIMax = RIMin * 2;
 
+	double effTubeN;												
+	effTubeN = EffectiveNum(tube, tubeN, ILD, RND); 
+	RIMin = effTubeN * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
+	RIMax = RIMin * 2;
+	printf("old rimax/min: %lf %lf\n", RIMax, RIMin);
+
+	printf("teta: %lf\n", teta);
 	Rotate(tube, tubeN, 3, -shiftAngle + M_PI/6 - teta); // get to AA
 	double AAshiftx = 0;
 	double AAshifty = 0;
@@ -238,7 +241,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	printf("RI max: %d\n", RIMax);
+	printf("RI max: %lf\n", RIMax);
 
 	//------------------- calculating RIMin ------------------------------
 	RIMin = 0;
@@ -252,6 +255,8 @@ int main(int argc, char *argv[])
 			RIMin = RIMin + effectiveNum * currentInteracting;
 		}
 	}
+
+	printf("RI min: %lf\n", RIMin);
 
 	Rotate(tube, tubeN, 3, -(-shiftAngle + M_PI/6 - teta));
 
