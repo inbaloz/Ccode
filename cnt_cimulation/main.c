@@ -11,7 +11,10 @@
 #include "CLI.h"
 #include "CutUnitcell.h"
 #include "DuplicateTube.h"
+#include "CutLastPartOfTube.h"
 #include "EffectiveNum.h"
+#include "Rotate.h"
+#include "RotateShift.h"
 #include "gcd.h"
 #include "LatticeCreator.h"
 #include "LoadInPar.h"
@@ -23,6 +26,7 @@
 #include "SlidingMotion.h"
 #include "SpinningMotion.h"
 #include "TwodDataToFile.h"
+#include "TubeToFile.h"
 
 #include "FindInteracting.h"
 
@@ -85,8 +89,8 @@ double ILD = 3.33;
 int main(int argc, char *argv[])
 {
 	int i;					// Loop counter.
-	int runOrGui;			// 1 for no gui, and 0 for gui.
 	char prefix[80];		// File prefixes.
+	char tubeFile[86];		// Tube file name
 
 //-----------------from configuration ----------------------------
 
@@ -196,7 +200,6 @@ int main(int argc, char *argv[])
 	double xMax = aVecLength(Ch) * cos((M_PI / 6) - teta);
 	double yMin = 0;
 	double yMax = ( aVecLength(Ch) * sin((M_PI / 6) - teta) + aVecLength(T) * cos( (M_PI / 6) - teta));
-	
 	// Creating the lattice (to make a tube of):
 	latticeN = LatticeCreator(&lattice,	xMin, yMin, xMax, yMax, tubeType);
 	}
@@ -206,62 +209,46 @@ int main(int argc, char *argv[])
 	// Duplicating the unitcell:
 	tube = DuplicateTube(tubeUnit, tubeUnitN, unitcellN, aVecLength(T));
 	tubeN = tubeUnitN * unitcellN;
+
+	// cut last part of tube if requested
+	if (percentTruncated != 0.0) {
+		CutLastPartOfTube(tube, &tubeN, percentTruncated);
+	}
+	// write tube to file
+	sprintf(tubeFile, "%s - tube", prefix);
+	TubeToFile(tube, tubeN, tubeFile);
+	printf("number of atoms: %d\n",tubeN);
+
 	// Free the unit tube, it isn't needed anymore:
 	free(tubeUnit);
-	// Initially rotating and spinning the tube as requested (around z axis).
-	Rotate(tube, tubeN, 3, shiftAngle);
-	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
 	// This lattice was used to create the tube. Now we free it for later reuse:
 	free(lattice);
 
 //********************** Step 4 - Normalizie RI ********************************
 
-	double effTubeN;												
+    //------------------ calculating RImax and RImin --------------------------
+	double effTubeN;
+	effTubeN = EffectiveNum(tube, tubeN, ILD, RND); 
+	RIMax = effTubeN * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2));
+
+	// rotate in half of rotation so we'll get to "the bottom" - 
+	// where we have the least amount of atoms in the surface (because of percentTruncated)
+	RotateShift(tube, tubeN, M_PI, shiftAngle, ILD + radius);
 	effTubeN = EffectiveNum(tube, tubeN, ILD, RND); 
 	RIMin = effTubeN * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
-	RIMax = RIMin * 2;
-	printf("old rimax/min: %lf %lf\n", RIMax, RIMin);
 
+	printf("RIMax / RIMin: %lf %lf\n", RIMax, RIMin);
 	printf("teta: %lf\n", teta);
-	Rotate(tube, tubeN, 3, -shiftAngle + M_PI/6 - teta); // get to AA
-	double AAshiftx = 0;
-	double AAshifty = 0;
 
-
-    //------------------ calculating RImax -----------------------------
-	double effectiveNum, currentInteracting;
-	RIMax = 0;
-	for (i = 0; i < tubeN; i++)
-	{
-		effectiveNum = exp( EXPNORM * (ILD - tube[i].z) / (RND - ILD) );
-		if (effectiveNum > NP)
-		{
-			currentInteracting = FindInteracting(tube[i], AAshiftx, AAshifty);
-			RIMax = RIMax + effectiveNum * currentInteracting;
-		}
-	}
-
-	printf("RI max: %lf\n", RIMax);
-
-	//------------------- calculating RIMin ------------------------------
-	RIMin = 0;
-	double ABshiftx = AAshiftx - 1.25*LATTICE_BL;
-	for (i = 0; i < tubeN; i++)
-	{
-		effectiveNum = exp( EXPNORM * (ILD - tube[i].z) / (RND - ILD) );
-		if (effectiveNum > NP)
-		{
-			currentInteracting = FindInteracting(tube[i], ABshiftx, AAshifty);
-			RIMin = RIMin + effectiveNum * currentInteracting;
-		}
-	}
-
-	printf("RI min: %lf\n", RIMin);
-
-	Rotate(tube, tubeN, 3, -(-shiftAngle + M_PI/6 - teta));
+	// rotate back in half so we'll get to the initial position
+	RotateShift(tube, tubeN, -M_PI, shiftAngle, ILD + radius);
 
 	
 //********************** Step 5 - Calculate RI *********************************
+
+	// Initially rotating and spinning the tube as requested (around z axis).
+	Rotate(tube, tubeN, 3, shiftAngle);
+	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
 
 	switch(motionType)
 	{
