@@ -1,7 +1,6 @@
 #include "Constants_and_libraries.h"
 #include "CalculateIntersection.h"
 #include <math.h>
-#include <stdio.h>
 
 // input: two atoms.
 // output: the intersection of the two circles around them on x-y plane.
@@ -17,7 +16,7 @@ double CalculateIntersection(Atom atomTube, Atom atomLattice)
 		return 0;
 	}
 	// Very close:
-	else if (d < ABS(r1 - r2))
+	else if (d <= ABS(r1 - r2))
 	{
 		return MIN(M_PI * pow(r1,2), M_PI * pow(r2,2));
 	}

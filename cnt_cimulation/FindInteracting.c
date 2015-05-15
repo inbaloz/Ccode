@@ -2,6 +2,7 @@
 #include "FindInteracting.h"
 #include "CalculateIntersection.h"
 #include <math.h>
+#include <stdio.h>
 
 // Input: a tube atom, the x,y requested shift of the tube's center.
 
@@ -130,7 +131,7 @@ double FindInteracting(Atom atom, double xShift, double yShift)
 		RI += CalculateIntersection(atomMod, temp);
 		temp.x = 2.5 * LATTICE_BL;
 		temp.y = 1.5 * LATTICE_HIGHT;
-		RI += CalculateIntersection(atomMod, temp);		
+		RI += CalculateIntersection(atomMod, temp);
 	}
 	return RI;
 

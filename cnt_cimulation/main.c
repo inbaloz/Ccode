@@ -230,8 +230,9 @@ int main(int argc, char *argv[])
 	effTubeN = EffectiveNum(tube, tubeN, ILD, RND); 
 	RIMin = effTubeN * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
 	RIMax = RIMin * 2;
-	printf("old rimax rimin: %lf, %lf", RIMax, RIMin);
+	printf("old rimax/min: %lf %lf\n", RIMax, RIMin);
 
+	printf("teta: %lf\n", teta);
 	Rotate(tube, tubeN, 3, -shiftAngle + M_PI/6 - teta); // get to AA
 	double AAshiftx = 0;
 	double AAshifty = 0;
