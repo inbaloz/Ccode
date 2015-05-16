@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
 	double yMin = 0;
 	double yMax = ( aVecLength(Ch) * sin((M_PI / 6) - teta) + aVecLength(T) * cos( (M_PI / 6) - teta));
 	// Creating the lattice (to make a tube of):
-	latticeN = LatticeCreator(&lattice,	xMin, yMin, xMax, yMax, tubeType);
+	latticeN = LatticeCreator(&lattice, xMin, yMin, xMax, yMax, tubeType);
 	}
 	// Making the tube's unitcell from the lattice:
 	tubeUnit = CutUnitcell(lattice, latticeN, Ch, T, (M_PI / 6) - teta, tubeUnitN);
@@ -232,18 +232,21 @@ int main(int argc, char *argv[])
 	if (percentTruncated != 0.0) {
 		CutLastPartOfTube(tube, &tubeN, percentTruncated);
 	}
-	// write tube to file
-	sprintf(tubeFile, "%s - tube", prefix);
-	TubeToFile(tube, tubeN, tubeFile);
-	printf("number of atoms: %d\n",tubeN);
 
 	// Free the unit tube, it isn't needed anymore:
 	free(tubeUnit);
 	// This lattice was used to create the tube. Now we free it for later reuse:
 	free(lattice);
+	printf("shiftangle: %lf, rotateangle: %lf\n", shiftAngle, rotateAngle);
+	printf("ILD: %lf, RND: %lf\n", ILD, RND);
+	printf("TUBE_BL: %lf, LATTICE_BL: %lf\n", TUBE_BL, LATTICE_BL);
 	// Initially rotating and spinning the tube as requested (around z axis).
 	Rotate(tube, tubeN, 3, shiftAngle);
 	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
+	// write tube to file
+	sprintf(tubeFile, "%s - tube", prefix);
+	TubeToFile(tube, tubeN, tubeFile);
+	printf("number of atoms: %d\n",tubeN);
 
 //********************** Step 4 - Normalizie RI ********************************
 	double effTubeNMax, effTubeNMin;
@@ -261,7 +264,6 @@ int main(int argc, char *argv[])
     //------------------ calculating RImax and RImin for CNT on graphene --------
 	if (tubeType == 0 && latticeType ==0) // CNT on graphene
 	{
-		printf("0,0\n");
 		RIMax = effTubeNMax * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2));
 		RIMin = effTubeNMin * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
 	}
@@ -393,7 +395,6 @@ int main(int argc, char *argv[])
         totDist = (rotSpinEnd - rotSpinStart) * radius;
         xStep = ( (totDist * cos(shiftAngle)) / (amountOfSteps - 1) );
         yStep = ( (totDist * sin(shiftAngle)) / (amountOfSteps - 1) );
-        printf ("xStep: %lf, yStep: %lf\n", xStep, yStep);
 
         //--------------------------------------------
 
@@ -409,7 +410,6 @@ int main(int argc, char *argv[])
 		}
 		// Rotating by "rotSpinStart":
 		RotateShift(tube, tubeN, rotSpinStart, shiftAngle, ILD + radius);
-		printf("shiftangle: %lf rotateAngle: %lf\n", shiftAngle, rotateAngle);
 		// Calculating RI:
 		PerfectRotationMotion(RI, xStart, yStart, xStep, yStep, rotSpinStep, amountOfSteps, 
 			                  tube, tubeN, radius, shiftAngle, latticeType);
