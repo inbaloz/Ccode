@@ -51,8 +51,6 @@ void CutLastPartOfTube(Atom *tube, int *tubeN, float percentTruncated) {
 	yCut = (1 - percentTruncated) * (yMax - yMin) + yMin;
 	a = zMax - zMin;
 	b = yMax - yCut;
-	printf("ymin: %lf, ymax: %lf, zmin: %lf, zmax: %lf\n", yMin, yMax, zMin, zMax);
-	printf("yCuy: %lf, a: %lf, b:%lf\n", yCut, a, b);
 
 	for (i = 0; i < *tubeN; i++)
 	{

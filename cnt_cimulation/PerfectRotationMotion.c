@@ -19,7 +19,7 @@
 
 void PerfectRotationMotion(double* RI, double xStart, double yStart, double xStep, double yStep,
 							double rotationStep, double amountOfSteps, 
-							Atom* tube, int tubeN, double radius, double shiftAngle)
+							Atom* tube, int tubeN, double radius, double shiftAngle, int latticeType)
 {
 	int i, j;
 	double effectiveNum;
@@ -34,7 +34,7 @@ void PerfectRotationMotion(double* RI, double xStart, double yStart, double xSte
 			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) );
 			if (effectiveNum > NP)
 			{
-				RI[i] = RI[i] + effectiveNum * FindInteracting(tube[j], xStart, yStart);
+				RI[i] = RI[i] + effectiveNum * FindInteracting(tube[j], xStart, yStart, latticeType);
 			}
 		}
 		RotateShift(tube, tubeN, rotationStep, shiftAngle, ILD + radius);

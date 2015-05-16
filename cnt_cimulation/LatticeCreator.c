@@ -22,10 +22,10 @@ int LatticeCreator(Atom** lattice, double xMin, double yMin, double xMax, double
 	int latticeN;				
 	int count = 0; 				// Counter for the atoms later on.
 
-	minLayer	 = 2 * (int)( (yMin / LATTICE_HIGHT) - 1.0 );
-	maxLayer	 = 2 * (int)( (yMax / LATTICE_HIGHT) + 1.0 );
-	startLayer	 = (int)( (xMin / LATTICE_HORIZD) - 1.0 );
-	endLayer	 = (int)( ( (xMax + LATTICE_HORIZS) / LATTICE_HORIZD) + 1.0 ); 	// The end of layer condition
+	minLayer	 = 2 * (int)( (yMin / TUBE_HIGHT) - 1.0 );
+	maxLayer	 = 2 * (int)( (yMax / TUBE_HIGHT) + 1.0 );
+	startLayer	 = (int)( (xMin / TUBE_HORIZD) - 1.0 );
+	endLayer	 = (int)( ( (xMax + TUBE_HORIZS) / TUBE_HORIZD) + 1.0 ); 	// The end of layer condition
 																// should be satisfied even for
 																// the shifted layers.
 	latticeN = 2 * (maxLayer - minLayer + 1) * (endLayer - startLayer + 1);
@@ -33,12 +33,12 @@ int LatticeCreator(Atom** lattice, double xMin, double yMin, double xMax, double
 	if (*lattice == NULL)
 	{
 		printf("A malloc has failed in the function Lattice_creator.\n");
-		exit;
+		exit(1);
 	}
 	// To create the lattice we are scanning the hight (y axis),
 	// in each hight layer we are placing the atoms in pairs.
 	// Note that in each odd layer there needs to be a shift
-	// in the horizontal axis (x axis) by LATTICE_HORIZS equals 1.5LATTICE_BL.
+	// in the horizontal axis (x axis) by TUBE_HORIZS equals 1.5TUBE_BL.
 
 	// The function enables us to create CNTs and hBN tubes.
 
@@ -55,14 +55,14 @@ int LatticeCreator(Atom** lattice, double xMin, double yMin, double xMax, double
 		for (j = startLayer; j <= endLayer; j++)
 		{
 			// First atom in the pair:
-			(*lattice)[count].y = i * LATTICE_HIGHT / 2;
-			(*lattice)[count].x = j * LATTICE_HORIZD - ( (ABS(i) % 2) * (LATTICE_HORIZS) );
+			(*lattice)[count].y = i * TUBE_HIGHT / 2;
+			(*lattice)[count].x = j * TUBE_HORIZD - ( (ABS(i) % 2) * (TUBE_HORIZS) );
 			(*lattice)[count].z = 0;
 			(*lattice)[count].type = firstAtom;
 			count++;
 			// Second atom in the pair:
-			(*lattice)[count].y = i * LATTICE_HIGHT / 2;
-			(*lattice)[count].x = j * LATTICE_HORIZD + LATTICE_BL - ( (ABS(i) % 2) * (LATTICE_HORIZS) );
+			(*lattice)[count].y = i * TUBE_HIGHT / 2;
+			(*lattice)[count].x = j * TUBE_HORIZD + TUBE_BL - ( (ABS(i) % 2) * (TUBE_HORIZS) );
 			(*lattice)[count].z = 0;
 			(*lattice)[count].type = secondAtom;
 			count++;

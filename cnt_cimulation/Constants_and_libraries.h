@@ -6,22 +6,24 @@
 #define NULL	0
 
 // TODO: paper 34
-#define CC_BL		1.44				// C-C bond length in Angstroms			
-#define BN_BL		1.45				// B-N bond length in Angstroms
-#define RBTUBE		(0.15 * BN_BL)		// Radius of Boron atom in BN tube
-#define RNTUBE		(0.5 * BN_BL)		// Radius of Nitrogen atom in BN tube
-#define RBLATTICE	(0.15 * BN_BL)		// Radius of Boron atom in BN hexagonal lattice
-#define RNLATTICE	(0.5 * BN_BL)		// Radius of Nitrogen atom in BN hexagonal lattice
-#define RCGRAPHENE	(0.5 * CC_BL)		// Radius of graphene atom (for RI calculations)
-#define RCCNT		(0.5 * CC_BL)		// Radius of carbon nanotube atom (for RI Calculations)
+#define CNT_BL			1.44				// C-C bond length in Angstroms	for a CNT	
+#define GRAPHENE_BL		1.44				// C-C bond length in Angstroms	for graphene	
+#define BN_TUBE_BL		1.45				// B-N bond length in Angstroms in a tube
+#define BN_LATTICE_BL	1.45				// B-N bond length in Angstroms in a lattice
+#define RBTUBE		(0.15 * BN_TUBE_BL)		// Radius of Boron atom in BN tube
+#define RNTUBE		(0.5 * BN_TUBE_BL)		// Radius of Nitrogen atom in BN tube
+#define RBLATTICE	(0.15 * BN_LATTICE_BL)	// Radius of Boron atom in BN hexagonal lattice
+#define RNLATTICE	(0.5 * BN_LATTICE_BL)	// Radius of Nitrogen atom in BN hexagonal lattice
+#define RCGRAPHENE	(0.5 * GRAPHENE_BL)		// Radius of graphene atom (for RI calculations)
+#define RCCNT		(0.5 * CNT_BL)			// Radius of carbon nanotube atom (for RI Calculations)
 
 #define LATTICE_HIGHT	(LATTICE_BL * sqrt(3))	// The hexagon's hight in the lattice
 #define TUBE_HIGHT		(TUBE_BL * sqrt(3))		// The hexagon's hight in the tube
-#define LATICE_WIDTH	(LATTICE_BL * 2)		// The hexagon's width in the lattice
-#define TUBE_WIDTH		(TUBE_BL * 2)			// The hexagon's width in the tube
+#define LATTICE_WIDTH	(LATTICE_BL * 2)		// The hexagon's width in the lattice (not in use)
+#define TUBE_WIDTH		(TUBE_BL * 2)			// The hexagon's width in the tube (not in use)
 #define LATTICE_HORIZD	(LATTICE_BL * 3)		// The horizontal symmetry distance of the lattice
 #define TUBE_HORIZD		(TUBE_BL * 3)			// The horizontal symmetry distance of the tube
-#define LATTICE_HORIZS	(LATTICE_BL * 1.5)		// The horizontal shift between atom layers of the lattice
+#define LATTICE_HORIZS	(LATTICE_BL * 1.5)		// The horizontal shift between atom layers of the lattice (not in use)
 #define TUBE_HORIZS		(TUBE_BL * 1.5)			// The horizontal shift between atom layers of the tube
 #define A				(TUBE_BL * sqrt(3))		// The length of a1 and a2 lattice vectors 
 

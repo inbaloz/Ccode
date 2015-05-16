@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-// TODO: finish this fucntion and move it to a new file
 /*
  gets a tube with gaps, represented by atoms with dummy type as type
  fixes the tube by shifting the cells left where there are gaps
