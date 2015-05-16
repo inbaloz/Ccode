@@ -23,6 +23,7 @@
 #include "SlidingMotion.h"
 #include "SpinningMotion.h"
 #include "TwodDataToFile.h"
+#include "TubeToFile.h"
 
 #include "FindInteracting.h"
 
@@ -82,6 +83,7 @@ int main(int argc, char *argv[])
 	int i;					// Loop counter.
 	int runOrGui;			// 1 for no gui, and 0 for gui.
 	char prefix[80];		// File prefixes.
+	char tubeFile[86];
 	int motionType;			// Type of tube motion.
 	int unitcellN;			// Amount of tube unitcells.
 	aVec Ch, T;				// Chirality and translational vectors.
@@ -238,6 +240,9 @@ int main(int argc, char *argv[])
 	Rotate(tube, tubeN, 3, shiftAngle);
 	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
 	// This lattice was used to create the tube. Now we free it for later reuse:
+	sprintf(tubeFile, "%s - tube", prefix);
+	TubeToFile(tube, tubeN, tubeFile);
+	printf("number of atoms: %d\n",tubeN);
 	free(lattice);
 
 //********************** Step 4 - Normalizie RI ********************************

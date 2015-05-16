@@ -23,6 +23,7 @@ C_FILES = \
 	SlidingMotion.c \
 	SpinningMotion.c \
 	TwodDataToFile.c \
+	TubeToFile.c \
 
 H_FILES = \
 	ArrayToFile.h \
@@ -49,6 +50,7 @@ H_FILES = \
 	SlidingMotion.h \
 	SpinningMotion.h \
 	TwodDataToFile.h \
+	TubeToFile.h \
 
 O_FILES = ${C_FILES:.c=.o} # Take the .c files and replace with .o
 
