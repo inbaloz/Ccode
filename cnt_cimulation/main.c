@@ -241,22 +241,27 @@ int main(int argc, char *argv[])
 	free(tubeUnit);
 	// This lattice was used to create the tube. Now we free it for later reuse:
 	free(lattice);
+	// Initially rotating and spinning the tube as requested (around z axis).
+	Rotate(tube, tubeN, 3, shiftAngle);
+	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
 
 //********************** Step 4 - Normalizie RI ********************************
 	double effTubeNMax, effTubeNMin;
-	effTubeNMax = EffectiveNum(tube, tubeN, ILD, RND); 
+	effTubeNMin = EffectiveNum(tube, tubeN, ILD, RND); 
 	// rotate in half of rotation so we'll get to "the bottom" - 
 	// where we have the least amount of atoms in the surface (because of percentTruncated).
 	// The rotateShift is 0 at this point (later we'll rotate it as the input requested)
-	RotateShift(tube, tubeN, M_PI, 0, ILD + radius);
+	RotateShift(tube, tubeN, M_PI, shiftAngle, ILD + radius);
 	// calculating the new effective number of atoms and the RIMin
-	effTubeNMin = EffectiveNum(tube, tubeN, ILD, RND); 
+	effTubeNMax = EffectiveNum(tube, tubeN, ILD, RND); 
 	// rotate back in half so we'll get to the initial position
-	RotateShift(tube, tubeN, -M_PI, 0, ILD + radius);
+	RotateShift(tube, tubeN, -M_PI, shiftAngle, ILD + radius);
+	printf("efftubeMax/Min: %lf, %lf\n", effTubeNMax, effTubeNMin);
 
     //------------------ calculating RImax and RImin for CNT on graphene --------
 	if (tubeType == 0 && latticeType ==0) // CNT on graphene
 	{
+		printf("0,0\n");
 		RIMax = effTubeNMax * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2));
 		RIMin = effTubeNMin * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
 	}
@@ -308,9 +313,7 @@ int main(int argc, char *argv[])
 	
 //********************** Step 5 - Calculate RI *********************************
 
-	// Initially rotating and spinning the tube as requested (around z axis).
-	Rotate(tube, tubeN, 3, shiftAngle);
-	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
+	
 
 	switch(motionType)
 	{
