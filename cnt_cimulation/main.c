@@ -237,12 +237,6 @@ int main(int argc, char *argv[])
 	free(tubeUnit);
 	// This lattice was used to create the tube. Now we free it for later reuse:
 	free(lattice);
-	printf("shiftangle: %lf, rotateangle: %lf\n", shiftAngle, rotateAngle);
-	printf("ILD: %lf, RND: %lf\n", ILD, RND);
-	printf("TUBE_BL: %lf, LATTICE_BL: %lf\n", TUBE_BL, LATTICE_BL);
-	// Initially rotating and spinning the tube as requested (around z axis).
-	Rotate(tube, tubeN, 3, shiftAngle);
-	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
 	// write tube to file
 	sprintf(tubeFile, "%s - tube", prefix);
 	TubeToFile(tube, tubeN, tubeFile);
@@ -250,15 +244,15 @@ int main(int argc, char *argv[])
 
 //********************** Step 4 - Normalizie RI ********************************
 	double effTubeNMax, effTubeNMin;
-	effTubeNMin = EffectiveNum(tube, tubeN, ILD, RND); 
+	effTubeNMax = EffectiveNum(tube, tubeN, ILD, RND); 
 	// rotate in half of rotation so we'll get to "the bottom" - 
 	// where we have the least amount of atoms in the surface (because of percentTruncated).
 	// The rotateShift is 0 at this point (later we'll rotate it as the input requested)
-	RotateShift(tube, tubeN, M_PI, shiftAngle, ILD + radius);
+	RotateShift(tube, tubeN, M_PI, 0, ILD + radius);
 	// calculating the new effective number of atoms and the RIMin
-	effTubeNMax = EffectiveNum(tube, tubeN, ILD, RND); 
+	effTubeNMin = EffectiveNum(tube, tubeN, ILD, RND); 
 	// rotate back in half so we'll get to the initial position
-	RotateShift(tube, tubeN, -M_PI, shiftAngle, ILD + radius);
+	RotateShift(tube, tubeN, -M_PI, 0, ILD + radius);
 	printf("efftubeMax/Min: %lf, %lf\n", effTubeNMax, effTubeNMin);
 
     //------------------ calculating RImax and RImin for CNT on graphene --------
@@ -285,28 +279,19 @@ int main(int argc, char *argv[])
 							   // C graphene on N tube
 							   0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RBTUBE,2))); 
 							   // C graphene on B tube
-// *********************************************************************************
-// ******************************* Ask oded for optimal stacking *******************
-// **********************************************************************************
-		// calculating the new effective number of atoms and the RIMin
-		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RNTUBE,2)) +
-							   // B lattice on N tube
-						       0.5 * MIN(M_PI * pow(RNLATTICE,2), M_PI * pow(RBTUBE,2))); 
-						       // N lattice on B tube
+
+		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RNTUBE,2))); 
+						       // N tube on C graphene
 	}
 	else // CNT on BN lattice
 	{
 		RIMax = effTubeNMax * (0.5 * MIN(M_PI * pow(RNLATTICE,2), M_PI * pow(RCCNT,2)) +
 							   // N lattice on C tube
-							   0.5* MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RCCNT,2))); 
-							   // B lattice on C tube
-// *********************************************************************************
-// ******************************* Ask oded for optimal stacking *******************
-// **********************************************************************************
-		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RNTUBE,2)) +
-							   // B lattice on N tube
-						       0.5 * MIN(M_PI * pow(RNLATTICE,2), M_PI * pow(RBTUBE,2))); 
-						       // N lattice on B tube
+							   0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RCCNT,2))); 
+
+
+		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCCNT,2), M_PI * pow(RNLATTICE,2)));
+							   // N lattice on C tube
 	}
 	
 	printf("RIMax / RIMin: %lf %lf\n", RIMax, RIMin);
@@ -315,6 +300,9 @@ int main(int argc, char *argv[])
 	
 //********************** Step 5 - Calculate RI *********************************
 
+	// Initially rotating and spinning the tube as requested (around z axis).
+	Rotate(tube, tubeN, 3, shiftAngle);
+	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
 	
 
 	switch(motionType)
