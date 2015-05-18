@@ -16,6 +16,7 @@ Atom * DuplicateTube(Atom* tubeUnit, int tubeUnitN, int duplicateN, double tubeL
 		{
 			tubeDuplicated[(i * tubeUnitN) + j].x = tubeUnit[j].x;
 			tubeDuplicated[(i * tubeUnitN) + j].z = tubeUnit[j].z;
+			tubeDuplicated[(i * tubeUnitN) + j].type = tubeUnit[j].type;
 			// The tube's axis is y axis. Therefore, only y is changed
 			// between unitcells.
 			tubeDuplicated[(i * tubeUnitN) + j].y = tubeUnit[j].y + (tubeLength * i);

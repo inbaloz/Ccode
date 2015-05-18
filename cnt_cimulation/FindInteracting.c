@@ -16,9 +16,9 @@
 double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 {
 	// Types of atoms
-	char firstAtom, secondAtom;
-	firstAtom = latticeType == 0 ? 'C' : 'B'; // the BN lattice starts at Boron.
-	secondAtom = latticeType == 0 ? 'C' : 'N';
+	int firstAtom, secondAtom;
+	firstAtom = latticeType == 0 ? C_type : B_type; // the BN lattice starts at Boron.
+	secondAtom = latticeType == 0 ? C_type : N_type;
 
 	// Ensuring we have a non-negative value in the right range:
 	double xMod = remainder(atom.x + xShift, LATTICE_HORIZD);
@@ -35,7 +35,7 @@ double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 		yMod = yMod + LATTICE_HIGHT;
 	}
 	Atom atomMod = { .x = xMod, .y = yMod, .z = atom.z , .type = atom.type};
-	Atom temp = { .x = 0, .y = 0, .z = 0 , .type = 'C'};
+	Atom temp = { .x = 0, .y = 0, .z = 0 , .type = C_type};
 
 	if (xMod >= 0 && xMod < LATTICE_BL)
 	{

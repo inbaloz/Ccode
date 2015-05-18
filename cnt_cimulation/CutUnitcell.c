@@ -66,6 +66,7 @@ Atom* CutUnitcell(Atom* lattice, int latticeN, aVec Ch, aVec T, double shiftAngl
 				cutLattice[count].x = lattice[i].x;
 				cutLattice[count].y = lattice[i].y;
 				cutLattice[count].z = lattice[i].z;
+				cutLattice[count].type = lattice[i].type;
 				count++;
 			}
 			else

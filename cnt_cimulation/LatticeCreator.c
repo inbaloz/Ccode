@@ -15,7 +15,7 @@ int LatticeCreator(Atom** lattice, double xMin, double yMin, double xMax, double
 	int i, j;					// Counters;
 	int minLayer, maxLayer;		// The index of the first and last layer.
 	int startLayer, endLayer;	// The index of the first and last pair of atmos in each layer.
-	char firstAtom, secondAtom; // the types of the first and second atoms in the lattice that 
+	int firstAtom=0, secondAtom=0; // the types of the first and second atoms in the lattice that 
 								// will make the tube (CNT or hBN).
 	// The amount of atoms in the lattice before cutting (the 2 stands for
 	// placing the atoms in pairs):
@@ -42,12 +42,14 @@ int LatticeCreator(Atom** lattice, double xMin, double yMin, double xMax, double
 
 	// The function enables us to create CNTs and hBN tubes.
 
+
+
 	if (tubeType == 0) { // if tube is CNT
-		firstAtom = 'C';
-		secondAtom = 'C';
+		firstAtom = C_type;
+		secondAtom = C_type;
 	} else if (tubeType == 1) { // if tube is BN
-		firstAtom = 'N';
-		secondAtom = 'B';
+		firstAtom = N_type;
+		secondAtom = B_type;
 	}
 
 	for (i = minLayer; i <= maxLayer; i++)

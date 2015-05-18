@@ -280,8 +280,8 @@ int main(int argc, char *argv[])
 							   0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RBTUBE,2))); 
 							   // C graphene on B tube
 
-		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RNTUBE,2))); 
-						       // N tube on C graphene
+		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RBTUBE,2))); 
+						       // B tube on C graphene
 	}
 	else // CNT on BN lattice
 	{
@@ -290,8 +290,8 @@ int main(int argc, char *argv[])
 							   0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RCCNT,2))); 
 
 
-		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCCNT,2), M_PI * pow(RNLATTICE,2)));
-							   // N lattice on C tube
+		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCCNT,2), M_PI * pow(RBLATTICE,2)));
+							   // B lattice on C tube
 	}
 	
 	printf("RIMax / RIMin: %lf %lf\n", RIMax, RIMin);

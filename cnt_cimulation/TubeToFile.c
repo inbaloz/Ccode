@@ -2,6 +2,12 @@
 #include "TubeToFile.h"
 #include <stdio.h>
 
+// getting types:
+// C - 0
+// N - 1
+// B - 2
+char temp;
+
 void TubeToFile(Atom *tube, int tubeN, char *destination)
 {
 	int i;
@@ -9,12 +15,13 @@ void TubeToFile(Atom *tube, int tubeN, char *destination)
 	
 	if (PT == 1)
 	{
-		fprintf(desFile, "x y z\n");
+		fprintf(desFile, "x y z type\n");
 	}
 
 	for (i = 0; i < tubeN; i++)
 	{
-		fprintf(desFile, "%e %e %e\n", tube[i].x, tube[i].y, tube[i].z);
+			fprintf(desFile, "%e %e %e %d\n", tube[i].x, tube[i].y, tube[i].z, tube[i].type);
 	}
+			
 	fclose(desFile);
 }

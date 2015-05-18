@@ -41,6 +41,11 @@
 #define PT		0				// Print title for data files? (1 = yes, 0 = no)
 #define DUMMY_TYPE '\xff'		// dummy type for dummy atoms - atoms we want to earase eventually
 
+//*************** atom types ******************
+#define C_type 0
+#define N_type 1
+#define B_type 2
+
 //**************** Useful *********************
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
 #define ABS(X)   ((X) >= 0  ? (X) : -(X))
@@ -55,7 +60,7 @@ extern double ILD;
 
 typedef struct
 {
-	char type; // 'C'arbon, 'B'oron, 'N'itrogen
+	int type; // Carbon, Boron, Nitrogen
 	// Coordinates:
 	double x;
 	double y;

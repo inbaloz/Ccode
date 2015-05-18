@@ -13,11 +13,11 @@ double CalculateIntersection(Atom atomTube, Atom atomLattice)
 	double d = sqrt(pow(atomTube.x - atomLattice.x, 2) + pow(atomTube.y - atomLattice.y, 2));
 	
 	// ----- setting the radii according to the atoms types (C/B/N) -----
-	if (atomTube.type == 'C')
+	if (atomTube.type == C_type)
 	{
 		r1 = RCCNT;
 	}
-	else if (atomTube.type == 'B')
+	else if (atomTube.type == B_type)
 	{
 		r1 = RBTUBE;
 	}
@@ -26,11 +26,11 @@ double CalculateIntersection(Atom atomTube, Atom atomLattice)
 		r1 = RNTUBE;
 	}
 
-	if (atomLattice.type == 'C')
+	if (atomLattice.type == C_type)
 	{
 		r2 = RCGRAPHENE;
 	}
-	else if (atomLattice.type == 'B')
+	else if (atomLattice.type == B_type)
 	{
 		r2 = RBLATTICE;
 	}
