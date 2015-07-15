@@ -2,135 +2,217 @@
 #include "FindInteracting.h"
 #include "CalculateIntersection.h"
 #include <math.h>
+#include <stdio.h>
 
 // Input: a tube atom, the x,y requested shift of the tube's center.
 
 // Output: the additiont to RI as a result of the interaction between
 // the input atom and the lattice atoms.
 
-// Note: the function assumes we have a standard lattice. This assumption
-// is always true unless you expand the codes functionality by changing
-// the way lattices and tubes are located.
-
-double FindInteracting(Atom atom, double xShift, double yShift)
+double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 {
+	// Types of atoms
+	int firstAtom, secondAtom;
+	firstAtom = latticeType == 0 ? C_type : B_type; // the BN lattice starts at Boron.
+	secondAtom = latticeType == 0 ? C_type : N_type;
+
 	// Ensuring we have a non-negative value in the right range:
-	double xMod = remainder(atom.x + xShift, HORIZD);
-	double yMod = remainder(atom.y + yShift, HIGHT);
+	double xMod = remainder(atom.x + xShift, LATTICE_HORIZD);
+	double yMod = remainder(atom.y + yShift, LATTICE_HIGHT);
 	double RI = 0; // It is the addition to RI before normalizing.
+	
 	// xMod and yMod need to be not negative:
 	if (xMod < 0)
 	{
-		xMod = xMod + HORIZD;
+		xMod = xMod + LATTICE_HORIZD;
 	}
 	if (yMod < 0)
 	{
-		yMod = yMod + HIGHT;
+		yMod = yMod + LATTICE_HIGHT;
 	}
-	Atom atomMod = { .x = xMod, .y = yMod, .z = atom.z };
-	Atom temp = { .x = 0, .y = 0, .z = 0 };
+	Atom atomMod = { .x = xMod, .y = yMod, .z = atom.z , .type = atom.type};
+	Atom temp = { .x = 0, .y = 0, .z = 0 , .type = C_type};
 
-	if (xMod >= 0 && xMod < BL)
+	if (xMod >= 0 && xMod < LATTICE_BL)
 	{
+		// 1
 		temp.x = 0;		//	**ALREADY THAT VALUE**
 		temp.y = 0;		//	**ALREADY THAT VALUE**
+		temp.type = firstAtom; // B or C
 		RI += CalculateIntersection(atomMod, temp);
-		temp.x = -0.5 * BL;
-		temp.y = 0.5 * HIGHT;
+		
+		// 2
+		temp.x = -0.5 * LATTICE_BL;
+		temp.y = 0.5 * LATTICE_HIGHT;
+		temp.type = secondAtom; // N or C
 		RI += CalculateIntersection(atomMod, temp);
+		
+		// 3
 		temp.x = 0;
-		temp.y = HIGHT;
+		temp.y = LATTICE_HIGHT;
+		temp.type = firstAtom; // B or C
 		RI += CalculateIntersection(atomMod, temp);
-		temp.x = BL;
-		temp.y = HIGHT;	//	**ALREADY THAT VALUE**
+		
+		// 4
+		temp.x = LATTICE_BL;
+		temp.y = LATTICE_HIGHT;	//	**ALREADY THAT VALUE**
+		temp.type = secondAtom; // N or C
 		RI += CalculateIntersection(atomMod, temp);
-		temp.x = 1.5 * BL;
-		temp.y = 0.5 * HIGHT;
+		
+		// 5
+		temp.x = 1.5 * LATTICE_BL;
+		temp.y = 0.5 * LATTICE_HIGHT;
+		temp.type = firstAtom; // B or C
 		RI += CalculateIntersection(atomMod, temp);
-		temp.x = BL;
+		
+		// 6
+		temp.x = LATTICE_BL;
 		temp.y = 0;
+		temp.type = secondAtom; // N or C
 		RI += CalculateIntersection(atomMod, temp);
 	}
-	else if	(xMod >= BL && xMod < (1.5 * BL))
+	else if	(xMod >= LATTICE_BL && xMod < (1.5 * LATTICE_BL))
 	{
-		temp.x = 1.5 * BL;
-		temp.y = -0.5 * HIGHT;
+		// 1
+		temp.x = 1.5 * LATTICE_BL;
+		temp.y = -0.5 * LATTICE_HIGHT;
+		temp.type = firstAtom; // B or C
 		RI += CalculateIntersection(atomMod, temp);
-		temp.x = BL;
+		
+		// 2
+		temp.x = LATTICE_BL;
 		temp.y = 0;
+		temp.type = secondAtom; // N or C
 		RI += CalculateIntersection(atomMod, temp);
-		temp.x = 1.5 * BL;
-		temp.y = 0.5 * HIGHT;
+		
+		// 3
+		temp.x = 1.5 * LATTICE_BL;
+		temp.y = 0.5 * LATTICE_HIGHT;
+		temp.type = firstAtom; // B or C
 		RI += CalculateIntersection(atomMod, temp);
-		temp.x = BL;
-		temp.y = HIGHT;
+		
+		// 4
+		temp.x = LATTICE_BL;
+		temp.y = LATTICE_HIGHT;
+		temp.type = secondAtom; // N or C
 		RI += CalculateIntersection(atomMod, temp);
-		temp.x = 1.5 * BL;
-		temp.y = 1.5 * HIGHT;
+		
+		// 5
+		temp.x = 1.5 * LATTICE_BL;
+		temp.y = 1.5 * LATTICE_HIGHT;
+		temp.type = firstAtom; // B or C
 		RI += CalculateIntersection(atomMod, temp);
 	}
-	else if (xMod >= (1.5 * BL) && xMod < (2.5 * BL))
+	else if (xMod >= (1.5 * LATTICE_BL) && xMod < (2.5 * LATTICE_BL))
 	{
-		if (yMod < (0.5 * HIGHT))
+		if (yMod < (0.5 * LATTICE_HIGHT))
 		{
-			temp.x = 1.5 * BL;
-			temp.y = -0.5 * HIGHT;
+			// 1
+			temp.x = 1.5 * LATTICE_BL;
+			temp.y = -0.5 * LATTICE_HIGHT;
+			temp.type = firstAtom; // B or C
 			RI += CalculateIntersection(atomMod, temp);
-			temp.x = BL;
+			
+			// 2
+			temp.x = LATTICE_BL;
 			temp.y = 0;
+			temp.type = secondAtom; // N or C
 			RI += CalculateIntersection(atomMod, temp);
-			temp.x = 1.5 * BL;
-			temp.y = 0.5 * HIGHT;
+			
+			// 3
+			temp.x = 1.5 * LATTICE_BL;
+			temp.y = 0.5 * LATTICE_HIGHT;
+			temp.type = firstAtom; // B or C
 			RI += CalculateIntersection(atomMod, temp);
-			temp.x = 2.5 * BL;
-			temp.y = 0.5 * HIGHT;
+			
+			// 4
+			temp.x = 2.5 * LATTICE_BL;
+			temp.y = 0.5 * LATTICE_HIGHT;
+			temp.type = secondAtom; // N or C
 			RI += CalculateIntersection(atomMod, temp);
-			temp.x = 3 * BL;
+			
+			// 5
+			temp.x = 3 * LATTICE_BL;
 			temp.y = 0;
+			temp.type = firstAtom; // B or C
 			RI += CalculateIntersection(atomMod, temp);
-			temp.x = 2.5 * BL;
-			temp.y = -0.5 * HIGHT;
+			
+			// 6	
+			temp.x = 2.5 * LATTICE_BL;
+			temp.y = -0.5 * LATTICE_HIGHT;
+			temp.type = secondAtom; // N or C
 			RI += CalculateIntersection(atomMod, temp);
 		}
 		else
 		{
-			temp.x = 1.5 * BL;
-			temp.y = 0.5 * HIGHT;
+			// 1
+			temp.x = 1.5 * LATTICE_BL;
+			temp.y = 0.5 * LATTICE_HIGHT;
+			temp.type = firstAtom; // B or C
 			RI += CalculateIntersection(atomMod, temp);
-			temp.x = BL;
-			temp.y = HIGHT;
+			
+			// 2
+			temp.x = LATTICE_BL;
+			temp.y = LATTICE_HIGHT;
+			temp.type = secondAtom; // N or C
 			RI += CalculateIntersection(atomMod, temp);
-			temp.x = 1.5 * BL;
-			temp.y = 1.5 * HIGHT;
+			
+			// 3
+			temp.x = 1.5 * LATTICE_BL;
+			temp.y = 1.5 * LATTICE_HIGHT;
+			temp.type = firstAtom; // B or C
 			RI += CalculateIntersection(atomMod, temp);
-			temp.x = 2.5 * BL;
-			temp.y = 1.5 * HIGHT;
+			
+			// 4
+			temp.x = 2.5 * LATTICE_BL;
+			temp.y = 1.5 * LATTICE_HIGHT;
+			temp.type = secondAtom; // N or C
 			RI += CalculateIntersection(atomMod, temp);
-			temp.x = 3 * BL;
-			temp.y = HIGHT;
+			
+			// 5
+			temp.x = 3 * LATTICE_BL;
+			temp.y = LATTICE_HIGHT;
+			temp.type = firstAtom; // B or C
 			RI += CalculateIntersection(atomMod, temp);
-			temp.x = 2.5 * BL;
-			temp.y = 0.5 * HIGHT;
+			
+			// 6
+			temp.x = 2.5 * LATTICE_BL;
+			temp.y = 0.5 * LATTICE_HIGHT;
+			temp.type = secondAtom; // N or C
 			RI += CalculateIntersection(atomMod, temp);		
 		}
 	}
-	else	// xMod >= (2.5 * BL) && xMod < (3 * BL)
+	else	// xMod >= (2.5 * LATTICE_BL) && xMod < (3 * LATTICE_BL)
 	{
-		temp.x = 2.5 * BL;
-		temp.y = -0.5 * HIGHT;
+		// 1
+		temp.x = 2.5 * LATTICE_BL;
+		temp.y = -0.5 * LATTICE_HIGHT;
+		temp.type = secondAtom; // N or C
 		RI += CalculateIntersection(atomMod, temp);
-		temp.x = 3 * BL;
+		
+		// 2
+		temp.x = 3 * LATTICE_BL;
 		temp.y = 0;
+		temp.type = firstAtom; // B or C
 		RI += CalculateIntersection(atomMod, temp);
-		temp.x = 2.5 * BL;
-		temp.y = 0.5 * HIGHT;
+		
+		// 3
+		temp.x = 2.5 * LATTICE_BL;
+		temp.y = 0.5 * LATTICE_HIGHT;
+		temp.type = secondAtom; // N or C
 		RI += CalculateIntersection(atomMod, temp);
-		temp.x = 3 * BL;
-		temp.y = HIGHT;
+		
+		// 4
+		temp.x = 3 * LATTICE_BL;
+		temp.y = LATTICE_HIGHT;
+		temp.type = firstAtom; // B or C
 		RI += CalculateIntersection(atomMod, temp);
-		temp.x = 2.5 * BL;
-		temp.y = 1.5 * HIGHT;
-		RI += CalculateIntersection(atomMod, temp);		
+		
+		// 5
+		temp.x = 2.5 * LATTICE_BL;
+		temp.y = 1.5 * LATTICE_HIGHT;
+		temp.type = secondAtom; // N or C
+		RI += CalculateIntersection(atomMod, temp);
 	}
 	return RI;
 

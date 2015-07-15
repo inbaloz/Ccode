@@ -14,6 +14,11 @@ InPar LoadInPar(char prefix[])
 	char line[100], *res;
 	int i;			// Simply a counter.
 	InPar input;
+
+	// default values for backwards compatability
+	input.percentTruncated = 0.0;
+	input.tubeType = 0;
+	input.latticeType = 0;
 	// Duplicating the prefix to prevent it from changing:
 	strcpy(destination, prefix);
 	strcat(destination, " - inputData");
@@ -88,7 +93,20 @@ InPar LoadInPar(char prefix[])
 		else if (strncmp(line, "y end", 5) == 0)
 		{
 			input.yEnd = atof(&line[i + 2]);
-		} else
+		} 
+		else if (strncmp(line, "percent truncated", 17) == 0)
+		{
+			input.percentTruncated = atof(&line[i + 2]);
+		}
+		else if (strncmp(line, "tube type", 9) == 0)
+		{
+			input.tubeType = atoi(&line[i + 2]);
+		}
+		else if (strncmp(line, "lattice type", 12) == 0)
+		{
+			input.latticeType = atoi(&line[i + 2]);
+		}
+		else
 		{
 			printf("a messed up line\n");
 		}

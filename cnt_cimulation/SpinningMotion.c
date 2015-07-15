@@ -14,7 +14,7 @@
 // the tube has been already spinned by rotSpinStart.
 
 void SpinningMotion(double* RI, double spinningStep, double amountOfSteps,
-					Atom* tube, int tubeN, double xShift, double yShift)
+					Atom* tube, int tubeN, double xShift, double yShift, int latticeType)
 {
 	int i, j;
 	double effectiveNum;
@@ -28,7 +28,7 @@ void SpinningMotion(double* RI, double spinningStep, double amountOfSteps,
 			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) );
 			if (effectiveNum > NP)
 			{
-				RI[i] = RI[i] + effectiveNum * FindInteracting(tube[j], xShift, yShift);
+				RI[i] = RI[i] + effectiveNum * FindInteracting(tube[j], xShift, yShift, latticeType);
 			}
 		}
 		Rotate(tube, tubeN, 3, spinningStep);

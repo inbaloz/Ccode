@@ -16,7 +16,8 @@
 // the tube has been already rotated by rotationStart.
 
 void RotationMotion(double* RI, double rotationStep, int amountOfSteps,
-					Atom* tube, int tubeN, double radius, double shiftAngle, double xShift, double yShift)
+					Atom* tube, int tubeN, double radius, double shiftAngle, 
+					double xShift, double yShift, int latticeType)
 {
 	int i, j;
 	double effectiveNum;
@@ -31,7 +32,7 @@ void RotationMotion(double* RI, double rotationStep, int amountOfSteps,
 			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) );
 			if (effectiveNum > NP)
 			{
-				currentInteracting = FindInteracting(tube[j], xShift, yShift);
+				currentInteracting = FindInteracting(tube[j], xShift, yShift, latticeType);
 				RI[i] = RI[i] + effectiveNum * currentInteracting;
 			}
 		}

@@ -6,6 +6,8 @@ C_FILES = \
 	CLI.c \
 	CutUnitcell.c \
 	DuplicateTube.c \
+	CutLastPartOfTube.c \
+	FixGapsInTube.c \
 	EffectiveNum.c \
 	FindInteracting.c \
 	gcd.c \
@@ -34,6 +36,8 @@ H_FILES = \
 	Constants_and_libraries.h \
 	CutUnitcell.h \
 	DuplicateTube.h \
+	CutLastPartOfTube.h \
+	FixGapsInTube.h \
 	EffectiveNum.h \
 	FindInteracting.h \
 	gcd.h \

@@ -11,7 +11,10 @@
 #include "CLI.h"
 #include "CutUnitcell.h"
 #include "DuplicateTube.h"
+#include "CutLastPartOfTube.h"
 #include "EffectiveNum.h"
+#include "Rotate.h"
+#include "RotateShift.h"
 #include "gcd.h"
 #include "LatticeCreator.h"
 #include "LoadInPar.h"
@@ -37,7 +40,7 @@
  *
  *	Step 3: Create the tube
  *
- *	Step 4: Normalizie RI
+ *	Step 4: Normalize RI
  *
  *	Step 5: Calculate RI
  *
@@ -78,12 +81,20 @@
  *
  *
  */
+
+// declaring the global parameters of the tube's BL, the lattice's BL and the ILD
+double LATTICE_BL;
+double TUBE_BL;
+double ILD;
+
 int main(int argc, char *argv[])
 {
 	int i;					// Loop counter.
-	int runOrGui;			// 1 for no gui, and 0 for gui.
 	char prefix[80];		// File prefixes.
-	char tubeFile[86];
+	char tubeFile[86];		// Tube file name
+
+//-----------------from configuration ----------------------------
+
 	int motionType;			// Type of tube motion.
 	int unitcellN;			// Amount of tube unitcells.
 	aVec Ch, T;				// Chirality and translational vectors.
@@ -101,11 +112,17 @@ int main(int argc, char *argv[])
 	double yStart;			// Starting y.				(type 3, 4)
 	double xEnd;			// Ending x.				(type 3)
 	double yEnd;			// Ending y.				(type 3)
+	double percentTruncated;// amount of Truncated tube from the end, in a right-angle triangular fashion.
+	int tubeType = 0;		// tube type: 	 0 for CNT, 1 for BN.
+	int latticeType = 0;	// lattice type: 0 for graphene, 1 for BN.
+
+//-----------------------------------------------------------------------------
+
 	double xStep;			// x Step...				(type 3*, 4*)
 	double yStep;			// y Step...				(type 3*, 4*)
 	double* slideValues;	// Slide values				(type 3*, 4*)
 	double slideStep;		// Slide step values		(type 3*, 4*)
-	double tot_dist;		// the total distance travelled by the tube (type 4)
+	double totDist;			// the total distance travelled by the tube (type 4)
 	Atom* tubeUnit;			// The tube's unitcell
 	int tubeUnitN;			// Number of atoms in the tube's unitcell
 	double radius;			// The tube's radius
@@ -116,7 +133,7 @@ int main(int argc, char *argv[])
 	int latticeN;			// The number of atoms in the lattice
 	double RIMin;			// The minimum surface
 	double RIMax;			// The maximum surface
-	double effTubeN;		// The effective number of atoms (normalized by hight)	
+	// double effTubeN;		// The effective number of atoms (normalized by hight)	
 	double* RI;				// The registry index data.
 							// type: used to mark what variables are used to
 							// each type of motion. If the number is marked
@@ -126,66 +143,23 @@ int main(int argc, char *argv[])
 
 //********************** Step 1 - Recieve input data ***************************
 	
-	// Determine automatic or non-automatic run:
+	// Load data
 	switch (argc)
 	{
 	case 1:
-		// We assume that the simplest case is running with a gui
-		// while using the default prefix.
-		runOrGui = 0;
+		// Load default data
 		strcpy(prefix, "Default");
 		break;
 	case 2:
-		sscanf(argv[1], "%d", &runOrGui);
-		strcpy(prefix, "Default");
-		break;
-	case 3:
-		sscanf(argv[1], "%d", &runOrGui);
-		strcpy(prefix, argv[2]);
-		break;
-	default:
-		printf("Too many input parameters (max 2).\n");
-		exit(0);
-	}
-
-	// Load data, load gui (if needed) and save data (if needed):
-	switch (runOrGui)
-	{
-	case -1:
-		// Create an empty data file (all values = 0):
-		input.Ch.n = 0;
-		input.Ch.m = 0;
-		input.unitcellN = 0;
-		input.shiftAngle = 0;
-		input.rotateAngle = 0;
-		input.xShift = 0;
-		input.yShift = 0;
-		input.rotSpinStart = 0;
-		input.rotSpinEnd = 0;
-		input.amountOfSteps = 0;
-		input.xStart = 0;
-		input.yStart = 0;
-		input.xEnd = 0;
-		input.yEnd = 0;
-		SaveInPar(input, "Empty");
-		exit(0);
-		break;
-	case 0:
-		// Load data:
-		input = LoadInPar(prefix);	
-		// Load gui:
-		input = CLI(input);
-		// Save final data:
-		SaveInPar(input, prefix);
-		break;
-	case 1:
-		// Load data without gui:
-		input = LoadInPar(prefix);
+		// Load data of the file name:
+		strcpy(prefix, argv[1]);
 		break;
 	default:
 		printf("Not a valid 1st argument, please enter -1 or 0 or 1.\n");
+		exit(0);
 		break;
 	}
+	input = LoadInPar(prefix);
 
 
 // The values are duplicated for extra readability:
@@ -200,14 +174,33 @@ int main(int argc, char *argv[])
 	yShift = input.yShift;
 	rotSpinStart = input.rotSpinStart;
 	rotSpinEnd = input.rotSpinEnd;
-	//rotSpinStart = -90 * M_PI / 180;
-	//rotSpinEnd = 90 * M_PI / 180;
 	amountOfSteps = input.amountOfSteps;
 	xStart = input.xStart;
 	yStart = input.yStart;
 	xEnd = input.xEnd;
 	yEnd = input.yEnd;
+	percentTruncated = input.percentTruncated;
+	tubeType = input.tubeType;
+	latticeType = input.latticeType;
 
+//---------------- setting the global parameters ----------------------------
+
+	TUBE_BL = tubeType == 0 ? CNT_BL : BN_TUBE_BL;
+	LATTICE_BL = latticeType == 0 ? GRAPHENE_BL : BN_LATTICE_BL;
+
+	if (tubeType == 0 && latticeType == 0)
+	{
+		ILD = CNT_G_ILD;
+	}
+	else if (tubeType == 1 && latticeType ==1)
+	{
+		ILD = BNT_BNL_ILD;
+	}
+	else 
+	{
+		ILD = BNT_G_ILD;
+	}
+	
 
 //********************** Step 2 - Calculate tube parameters ********************
 	T = CalculateTranslational(Ch);
@@ -225,67 +218,91 @@ int main(int argc, char *argv[])
 	double xMax = aVecLength(Ch) * cos((M_PI / 6) - teta);
 	double yMin = 0;
 	double yMax = ( aVecLength(Ch) * sin((M_PI / 6) - teta) + aVecLength(T) * cos( (M_PI / 6) - teta));
-	
 	// Creating the lattice (to make a tube of):
-	latticeN = LatticeCreator(&lattice,	xMin, yMin, xMax, yMax);
+	latticeN = LatticeCreator(&lattice, xMin, yMin, xMax, yMax, tubeType);
 	}
 	// Making the tube's unitcell from the lattice:
 	tubeUnit = CutUnitcell(lattice, latticeN, Ch, T, (M_PI / 6) - teta, tubeUnitN);
+
 	// Duplicating the unitcell:
 	tube = DuplicateTube(tubeUnit, tubeUnitN, unitcellN, aVecLength(T));
 	tubeN = tubeUnitN * unitcellN;
+
+	// cut last part of tube if requested
+	if (percentTruncated != 0.0) {
+		CutLastPartOfTube(tube, &tubeN, percentTruncated);
+	}
+
 	// Free the unit tube, it isn't needed anymore:
 	free(tubeUnit);
-	// Initially rotating and spinning the tube as requested (around z axis).
-	Rotate(tube, tubeN, 3, shiftAngle);
-	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
 	// This lattice was used to create the tube. Now we free it for later reuse:
 	sprintf(tubeFile, "%s - tube", prefix);
 	TubeToFile(tube, tubeN, tubeFile);
 	printf("number of atoms: %d\n",tubeN);
 	free(lattice);
+	// write tube to file
+	sprintf(tubeFile, "%s - tube", prefix);
+	TubeToFile(tube, tubeN, tubeFile);
+	//printf("number of atoms: %d\n",tubeN);
 
 //********************** Step 4 - Normalizie RI ********************************
-												
-	effTubeN = EffectiveNum(tube, tubeN, ILD, RND); 
-	RIMin = effTubeN * MIN(M_PI * pow(RCG,2), M_PI * pow(RCC,2)) / 2;
-	RIMax = RIMin * 2;
+	double effTubeNMax, effTubeNMin;
+	effTubeNMax = EffectiveNum(tube, tubeN, ILD, RND); 
+	// rotate in half of rotation so we'll get to "the bottom" - 
+	// where we have the least amount of atoms in the surface (because of percentTruncated).
+	// The rotateShift is 0 at this point (later we'll rotate it as the input requested)
+	RotateShift(tube, tubeN, M_PI, 0, ILD + radius);
+	// calculating the new effective number of atoms and the RIMin
+	effTubeNMin = EffectiveNum(tube, tubeN, ILD, RND); 
+	// rotate back in half so we'll get to the initial position
+	RotateShift(tube, tubeN, -M_PI, 0, ILD + radius);
 
-	Rotate(tube, tubeN, 3, -shiftAngle + M_PI/6 - teta); // get to AA
-	double AAshiftx = 0;
-	double AAshifty = 0;
-
-
-    //------------------ calculating RImax -----------------------------
-	double effectiveNum, currentInteracting;
-	RIMax = 0;
-	for (i = 0; i < tubeN; i++)
+    //------------------ calculating RImax and RImin --------
+	if (tubeType == 0 && latticeType == 0) // CNT on graphene
 	{
-		effectiveNum = exp( EXPNORM * (ILD - tube[i].z) / (RND - ILD) );
-		if (effectiveNum > NP)
-		{
-			currentInteracting = FindInteracting(tube[i], AAshiftx, AAshifty);
-			RIMax = RIMax + effectiveNum * currentInteracting;
-		}
+		RIMax = effTubeNMax * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2));
+		RIMin = effTubeNMin * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
 	}
-
-	//------------------- calculating RIMin ------------------------------
-	RIMin = 0;
-	double ABshiftx = AAshiftx - 1.25*BL;
-	for (i = 0; i < tubeN; i++)
+	else if (tubeType == 1 && latticeType ==1) // BN tube on BN lattice
 	{
-		effectiveNum = exp( EXPNORM * (ILD - tube[i].z) / (RND - ILD) );
-		if (effectiveNum > NP)
-		{
-			currentInteracting = FindInteracting(tube[i], ABshiftx, AAshifty);
-			RIMin = RIMin + effectiveNum * currentInteracting;
-		}
+		RIMax = effTubeNMax * (0.5 * MIN(M_PI * pow(RNLATTICE,2), M_PI * pow(RNTUBE,2)) +
+							   // N lattice on N tube
+							   0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RBTUBE,2))); 
+							   // B lattice on B tube
+		// calculating the new effective number of atoms and the RIMin
+		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RNTUBE,2)) +
+							   // B lattice on N tube
+						       0.5 * MIN(M_PI * pow(RNLATTICE,2), M_PI * pow(RBTUBE,2))); 
+						       // N lattice on B tube
 	}
+	else if (tubeType == 1 && latticeType == 0) // BN tube on graphene
+	{
+		RIMax = effTubeNMax * (0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RNTUBE,2)) +
+							   // C graphene on N tube
+							   0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RBTUBE,2))); 
+							   // C graphene on B tube
 
-	Rotate(tube, tubeN, 3, -(-shiftAngle + M_PI/6 - teta));
+		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RBTUBE,2))); 
+						       // B tube on C graphene
+	}
+	else // CNT on BN lattice
+	{
+		RIMax = effTubeNMax * (0.5 * MIN(M_PI * pow(RNLATTICE,2), M_PI * pow(RCCNT,2)) +
+							   // N lattice on C tube
+							   0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RCCNT,2))); 
+
+
+		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCCNT,2), M_PI * pow(RBLATTICE,2)));
+							   // B lattice on C tube
+	}
 
 	
 //********************** Step 5 - Calculate RI *********************************
+
+	// Initially rotating and spinning the tube as requested (around z axis).
+	Rotate(tube, tubeN, 3, shiftAngle);
+	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
+	
 
 	switch(motionType)
 	{
@@ -302,7 +319,8 @@ int main(int argc, char *argv[])
 		// Rotating by "rotSpinStart":
 		RotateShift(tube, tubeN, rotSpinStart, shiftAngle, ILD + radius);
 		// Calculating RI:
-		RotationMotion(RI, rotSpinStep, amountOfSteps, tube, tubeN, radius, shiftAngle, xShift, yShift);
+		RotationMotion(RI, rotSpinStep, amountOfSteps, tube, tubeN, radius, 
+			           shiftAngle, xShift, yShift, latticeType);
 		// Printing the RI and rotSpinValues to a file:
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		Rad2Deg(rotSpinValues, amountOfSteps);
@@ -323,7 +341,7 @@ int main(int argc, char *argv[])
 		// Spinning by "rotSpinStart":
 		Rotate(tube, tubeN, 3, rotSpinStart);
 		// Calculating RI:
-		SpinningMotion(RI, rotSpinStep, amountOfSteps, tube, tubeN, xShift, yShift);			
+		SpinningMotion(RI, rotSpinStep, amountOfSteps, tube, tubeN, xShift, yShift, latticeType);			
 		// Printing the RI and rotSpinValues to a file:
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		Rad2Deg(rotSpinValues, amountOfSteps);
@@ -339,13 +357,12 @@ int main(int argc, char *argv[])
 		xStep = ( (xEnd - xStart) / (amountOfSteps - 1) );
 		yStep = ( (yEnd - yStart) / (amountOfSteps - 1) );
 		slideStep = sqrt( (xStep * xStep) + (yStep * yStep) );
-		printf("slidestep: %e\n", slideStep);
 		for (i = 0; i < amountOfSteps; i++)
 		{
 			slideValues[i] = slideStep * i;
 		}
 		// Calculating RI:
-		SlidingMotion(RI, xStep, yStep, amountOfSteps, tube, tubeN, xStart, yStart);			
+		SlidingMotion(RI, xStep, yStep, amountOfSteps, tube, tubeN, xStart, yStart, latticeType);			
 		// Printing the RI and x-yValues to a file:
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		TwodDataToFile(slideValues, RI, amountOfSteps, strcat(prefix, " - Sliding RI Data"));
@@ -360,19 +377,18 @@ int main(int argc, char *argv[])
 		rotSpinStep = ( (rotSpinEnd - rotSpinStart) / (amountOfSteps - 1) );
 
 		//--------------------------------------------
-        // I tried adding to the code - hope it's ok
 
-        tot_dist = (rotSpinEnd - rotSpinStart) * radius;
-        xStep = ( (tot_dist * cos(shiftAngle)) / (amountOfSteps - 1) );
-        yStep = ( (tot_dist * sin(shiftAngle)) / (amountOfSteps - 1) );
+        totDist = (rotSpinEnd - rotSpinStart) * radius;
+        xStep = ( (totDist * cos(shiftAngle)) / (amountOfSteps - 1) );
+        yStep = ( (totDist * sin(shiftAngle)) / (amountOfSteps - 1) );
 
         //--------------------------------------------
 
 		slideStep = sqrt( (xStep * xStep) + (yStep * yStep) );
 
-		//xStep = slideStep * radius * cos(shiftAngle); // why not multiply by rotSpinStep?
+		//xStep = slideStep * radius * cos(shiftAngle); 
 		//yStep = slideStep * radius * sin(shiftAngle);
-		rotSpinStep = ( (rotSpinEnd - rotSpinStart) / (amountOfSteps - 1) ); // why do it twice?
+		rotSpinStep = ( (rotSpinEnd - rotSpinStart) / (amountOfSteps - 1) ); 
 
 		for (i = 0; i < amountOfSteps; i++)
 		{
@@ -381,7 +397,8 @@ int main(int argc, char *argv[])
 		// Rotating by "rotSpinStart":
 		RotateShift(tube, tubeN, rotSpinStart, shiftAngle, ILD + radius);
 		// Calculating RI:
-		PerfectRotationMotion(RI, xStart, yStart, xStep, yStep, rotSpinStep, amountOfSteps, tube, tubeN, radius, shiftAngle);
+		PerfectRotationMotion(RI, xStart, yStart, xStep, yStep, rotSpinStep, amountOfSteps, 
+			                  tube, tubeN, radius, shiftAngle, latticeType);
 		// Printing the RI and x-yValues to a file:
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		TwodDataToFile(slideValues, RI, amountOfSteps, strcat(prefix, " - Perfect Rotation RI Data"));
