@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
 	TUBE_BL = tubeType == 0 ? CNT_BL : BN_TUBE_BL;
 	LATTICE_BL = latticeType == 0 ? GRAPHENE_BL : BN_LATTICE_BL;
 
-	if (tubeType == 0 && latticeType ==0)
+	if (tubeType == 0 && latticeType == 0)
 	{
 		ILD = CNT_G_ILD;
 	}
@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
 	// write tube to file
 	sprintf(tubeFile, "%s - tube", prefix);
 	TubeToFile(tube, tubeN, tubeFile);
-	printf("number of atoms: %d\n",tubeN);
+	//printf("number of atoms: %d\n",tubeN);
 
 //********************** Step 4 - Normalizie RI ********************************
 	double effTubeNMax, effTubeNMin;
@@ -253,10 +253,9 @@ int main(int argc, char *argv[])
 	effTubeNMin = EffectiveNum(tube, tubeN, ILD, RND); 
 	// rotate back in half so we'll get to the initial position
 	RotateShift(tube, tubeN, -M_PI, 0, ILD + radius);
-	printf("efftubeMax/Min: %lf, %lf\n", effTubeNMax, effTubeNMin);
 
-    //------------------ calculating RImax and RImin for CNT on graphene --------
-	if (tubeType == 0 && latticeType ==0) // CNT on graphene
+    //------------------ calculating RImax and RImin --------
+	if (tubeType == 0 && latticeType == 0) // CNT on graphene
 	{
 		RIMax = effTubeNMax * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2));
 		RIMin = effTubeNMin * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
@@ -293,9 +292,6 @@ int main(int argc, char *argv[])
 		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCCNT,2), M_PI * pow(RBLATTICE,2)));
 							   // B lattice on C tube
 	}
-	
-	printf("RIMax / RIMin: %lf %lf\n", RIMax, RIMin);
-	printf("teta: %lf\n", teta);
 
 	
 //********************** Step 5 - Calculate RI *********************************
@@ -378,7 +374,6 @@ int main(int argc, char *argv[])
 		rotSpinStep = ( (rotSpinEnd - rotSpinStart) / (amountOfSteps - 1) );
 
 		//--------------------------------------------
-        // I tried adding to the code - hope it's ok
 
         totDist = (rotSpinEnd - rotSpinStart) * radius;
         xStep = ( (totDist * cos(shiftAngle)) / (amountOfSteps - 1) );
@@ -388,7 +383,7 @@ int main(int argc, char *argv[])
 
 		slideStep = sqrt( (xStep * xStep) + (yStep * yStep) );
 
-		//xStep = slideStep * radius * cos(shiftAngle); // why not multiply by rotSpinStep?
+		//xStep = slideStep * radius * cos(shiftAngle); 
 		//yStep = slideStep * radius * sin(shiftAngle);
 		rotSpinStep = ( (rotSpinEnd - rotSpinStart) / (amountOfSteps - 1) ); 
 

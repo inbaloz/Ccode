@@ -9,10 +9,6 @@
 // Output: the additiont to RI as a result of the interaction between
 // the input atom and the lattice atoms.
 
-// Note: the function assumes we have a standard lattice. This assumption
-// is always true unless you expand the codes functionality by changing
-// the way lattices and tubes are located.
-
 double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 {
 	// Types of atoms
