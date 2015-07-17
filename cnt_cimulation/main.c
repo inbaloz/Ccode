@@ -164,40 +164,37 @@ int main(int argc, char *argv[])
 
 // The values are duplicated for extra readability:
 // (and because there aren't many of them..)
-	Ch.n = input.Ch.n;
-	Ch.m = input.Ch.m;
-	unitcellN = input.unitcellN;
-	motionType = input.motionType;
-	shiftAngle = input.shiftAngle;
-	rotateAngle = input.rotateAngle;
-	xShift = input.xShift;
-	yShift = input.yShift;
-	rotSpinStart = input.rotSpinStart;
-	rotSpinEnd = input.rotSpinEnd;
-	amountOfSteps = input.amountOfSteps;
-	xStart = input.xStart;
-	yStart = input.yStart;
-	xEnd = input.xEnd;
-	yEnd = input.yEnd;
+	Ch.n             = input.Ch.n;
+	Ch.m             = input.Ch.m;
+	unitcellN        = input.unitcellN;
+	motionType       = input.motionType;
+	shiftAngle       = input.shiftAngle;
+	rotateAngle      = input.rotateAngle;
+	xShift           = input.xShift;
+	yShift           = input.yShift;
+	rotSpinStart     = input.rotSpinStart;
+	rotSpinEnd       = input.rotSpinEnd;
+	amountOfSteps    = input.amountOfSteps;
+	xStart           = input.xStart;
+	yStart           = input.yStart;
+	xEnd             = input.xEnd;
+	yEnd             = input.yEnd;
 	percentTruncated = input.percentTruncated;
-	tubeType = input.tubeType;
-	latticeType = input.latticeType;
+	tubeType         = input.tubeType;
+	latticeType      = input.latticeType;
 
 //---------------- setting the global parameters ----------------------------
 
-	TUBE_BL = tubeType == 0 ? CNT_BL : BN_TUBE_BL;
-	LATTICE_BL = latticeType == 0 ? GRAPHENE_BL : BN_LATTICE_BL;
+	TUBE_BL             = ((tubeType     == 0) ? CNT_BL      : BN_TUBE_BL);
+	LATTICE_BL          = ((latticeType  == 0) ? GRAPHENE_BL : BN_LATTICE_BL);
 
-	if (tubeType == 0 && latticeType == 0)
-	{
+	if ((tubeType == 0) && (latticeType == 0)) {
 		ILD = CNT_G_ILD;
 	}
-	else if (tubeType == 1 && latticeType ==1)
-	{
+	else if ((tubeType == 1) && (latticeType == 1)) {
 		ILD = BNT_BNL_ILD;
 	}
-	else 
-	{
+	else {
 		ILD = BNT_G_ILD;
 	}
 	
