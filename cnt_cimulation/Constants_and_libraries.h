@@ -31,11 +31,10 @@
 #define CNT_G_ILD		3.33			// Interlayer difference between CNT and graphene lattice in Angstroms // TODO Inbal - I found 3.35 for cc and 3.33 for BN
 #define BNT_G_ILD		3.33			// Interlayer difference between BN tube and graphene lattice in Angstroms // TODO Inbal - I found 3.35 for cc and 3.33 for BN
 #define BNT_BNL_ILD		3.33			// Interlayer difference in Angstroms // TODO Inbal - I found 3.35 for cc and 3.33 for BN
-#define RND				(ILD + 1.53)	// Maximum hight that isn't negligible
 
 #define NAN		(0/0)			// Nan
 #define NP		(0.01)			// Negligible part;
-#define EXPNORM	(4.605170186)	// ABS(log(0.01)) (log = ln)
+#define EXPNORM	(abs(log(NP)))	// ABS(log(0.01)) (log = ln)
 
 #define WRITE	"w"				// Writing type
 #define PT		0				// Print title for data files? (1 = yes, 0 = no)
@@ -95,3 +94,4 @@ typedef struct
 } InPar;
 
 #endif /* On the #ifndef __CONSTANTS_AND_LIBRARIES__ */
+extern double MAX_HEIGHT;

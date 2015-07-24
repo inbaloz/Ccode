@@ -20,7 +20,7 @@ void SlidingMotion(double* RI, double xStep, double yStep, double amountOfSteps,
 		RI[i] = 0;
 		for (j = 0; j < tubeN; j++)
 		{
-			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
+			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (MAX_HEIGHT - ILD) ); // find weight of atom
 			if (effectiveNum > NP)
 			{
 				currentInteracting = FindInteracting(tube[j], xShift, yShift, latticeType);

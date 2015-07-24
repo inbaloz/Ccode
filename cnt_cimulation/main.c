@@ -86,6 +86,7 @@
 double LATTICE_BL;
 double TUBE_BL;
 double ILD;
+double MAX_HEIGHT;
 
 int main(int argc, char *argv[])
 {
@@ -204,6 +205,7 @@ int main(int argc, char *argv[])
 	tubeUnitN = 4 * ( ((Ch.m) * (Ch.m)) + ((Ch.n) * (Ch.n)) + ((Ch.n) * (Ch.m)) ) / gcd(Ch.n, Ch.m);
 	teta = acos( (2 * Ch.n + Ch.m) / (2 * sqrt( (Ch.n * Ch.n) + (Ch.m * Ch.m) + (Ch.n * Ch.m) ) ) );
 	radius = aVecLength(Ch) / (2 * M_PI);
+	MAX_HEIGHT = radius;
 	length = aVecLength(T) * unitcellN;
 
 //********************** Step 3 - Create the tube ******************************
@@ -244,13 +246,13 @@ int main(int argc, char *argv[])
 
 //********************** Step 4 - Normalizie RI ********************************
 	double effTubeNMax, effTubeNMin;
-	effTubeNMax = EffectiveNum(tube, tubeN, ILD, RND); 
+	effTubeNMax = EffectiveNum(tube, tubeN, ILD, MAX_HEIGHT); 
 	// rotate in half of rotation so we'll get to "the bottom" - 
 	// where we have the least amount of atoms in the surface (because of percentTruncated).
 	// The rotateShift is 0 at this point (later we'll rotate it as the input requested)
 	RotateShift(tube, tubeN, M_PI, 0, ILD + radius);
 	// calculating the new effective number of atoms and the RIMin
-	effTubeNMin = EffectiveNum(tube, tubeN, ILD, RND); 
+	effTubeNMin = EffectiveNum(tube, tubeN, ILD, MAX_HEIGHT); 
 	// rotate back in half so we'll get to the initial position
 	RotateShift(tube, tubeN, -M_PI, 0, ILD + radius);
 

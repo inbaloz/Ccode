@@ -29,7 +29,7 @@ void RotationMotion(double* RI, double rotationStep, int amountOfSteps,
 		RI[i] = 0;
 		for (j = 0; j < tubeN; j++)
 		{
-			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) );
+			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (MAX_HEIGHT - ILD) );
 			if (effectiveNum > NP)
 			{
 				currentInteracting = FindInteracting(tube[j], xShift, yShift, latticeType);
