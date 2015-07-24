@@ -5,17 +5,27 @@
 //*************** Constants ******************
 #define NULL	0
 
-// TODO: paper 34
-#define CNT_BL			1.44				// C-C bond length in Angstroms	for a CNT	
-#define GRAPHENE_BL		1.44				// C-C bond length in Angstroms	for graphene	
-#define BN_TUBE_BL		1.45				// B-N bond length in Angstroms in a tube
-#define BN_LATTICE_BL	1.45				// B-N bond length in Angstroms in a lattice
-#define RBTUBE		(0.15 * BN_TUBE_BL)		// Radius of Boron atom in BN tube
-#define RNTUBE		(0.5 * BN_TUBE_BL)		// Radius of Nitrogen atom in BN tube
-#define RBLATTICE	(0.15 * BN_LATTICE_BL)	// Radius of Boron atom in BN hexagonal lattice
-#define RNLATTICE	(0.5 * BN_LATTICE_BL)	// Radius of Nitrogen atom in BN hexagonal lattice
-#define RCGRAPHENE	(0.5 * GRAPHENE_BL)		// Radius of graphene atom (for RI calculations)
-#define RCCNT		(0.5 * CNT_BL)			// Radius of carbon nanotube atom (for RI Calculations)
+#define CNT_BL_HOMO		     1.42	        // C-C bond length in Angstroms	for a CNT in a homojunction
+#define CNT_BL_HETERO	     1.431	        // C-C bond length in Angstroms	for a CNT in a heterojunction
+#define GRAPHENE_BL_HOMO     1.42			// C-C bond length in Angstroms	for graphene in a homojunction
+#define GRAPHENE_BL_HETERO   1.431			// C-C bond length in Angstroms	for graphene in a heterojunction	
+#define BN_TUBE_BL_HOMO	     1.45			// B-N bond length in Angstroms in a tube in a homojunction
+#define BN_TUBE_BL_HETERO    1.431			// B-N bond length in Angstroms in a tube in a heterojunction
+#define BN_LATTICE_BL_HOMO	 1.45			// B-N bond length in Angstroms in a lattice in a homojunction
+#define BN_LATTICE_BL_HETERO 1.431			// B-N bond length in Angstroms in a lattice in a heterojunction
+
+#define RCGRAPHENE_HOMO	    (0.5  * GRAPHENE_BL_HOMO)     // Radius of graphene atom (for RI calculations)
+#define RCGRAPHENE_HETERO	(0.5  * GRAPHENE_BL_HETERO)   // Radius of graphene atom (for RI calculations)
+#define RCCNT_HOMO		    (0.5  * CNT_BL_HOMO)		  // Radius of carbon nanotube atom (for RI Calculations)
+#define RCCNT_HETERO		(0.5  * CNT_BL_HETERO)		  // Radius of carbon nanotube atom (for RI Calculations)
+#define RBTUBE_HOMO		    (0.15 * BN_TUBE_BL_HOMO)      // Radius of Boron atom in BN tube in a homojunction
+#define RBTUBE_HETERO       (0.2  * BN_TUBE_BL_HETERO)    // Radius of Boron atom in BN tube in a heterojunction
+#define RBLATTICE_HOMO	    (0.15 * BN_LATTICE_BL_HOMO)	  // Radius of Boron atom in BN hexagonal lattice
+#define RBLATTICE_HETERO	(0.2  * BN_LATTICE_BL_HETERO) // Radius of Boron atom in BN hexagonal lattice
+#define RNTUBE_HOMO			(0.5  * BN_TUBE_BL_HOMO)	  // Radius of Nitrogen atom in BN tube
+#define RNTUBE_HETERO		(0.4  * BN_TUBE_BL_HETERO)	  // Radius of Nitrogen atom in BN tube
+#define RNLATTICE_HOMO	    (0.5  * BN_LATTICE_BL_HOMO)	  // Radius of Nitrogen atom in BN hexagonal lattice
+#define RNLATTICE_HETERO    (0.4  * BN_LATTICE_BL_HETERO) // Radius of Nitrogen atom in BN hexagonal lattice
 
 #define LATTICE_HIGHT	(LATTICE_BL * sqrt(3))	// The hexagon's hight in the lattice
 #define TUBE_HIGHT		(TUBE_BL * sqrt(3))		// The hexagon's hight in the tube
@@ -27,12 +37,10 @@
 #define TUBE_HORIZS		(TUBE_BL * 1.5)			// The horizontal shift between atom layers of the tube
 #define A				(TUBE_BL * sqrt(3))		// The length of a1 and a2 lattice vectors 
 
-// TODO: paper 28
 #define CNT_G_ILD		3.33			// Interlayer difference between CNT and graphene lattice in Angstroms // TODO Inbal - I found 3.35 for cc and 3.33 for BN
 #define BNT_G_ILD		3.33			// Interlayer difference between BN tube and graphene lattice in Angstroms // TODO Inbal - I found 3.35 for cc and 3.33 for BN
 #define BNT_BNL_ILD		3.33			// Interlayer difference in Angstroms // TODO Inbal - I found 3.35 for cc and 3.33 for BN
 
-#define NAN		(0/0)			// Nan
 #define NP		(0.01)			// Negligible part;
 #define EXPNORM	(abs(log(NP)))	// ABS(log(0.01)) (log = ln)
 
@@ -49,11 +57,11 @@
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
 #define ABS(X)   ((X) >= 0  ? (X) : -(X))
 
-//**************** Globals *********************
-// tube BL, lattice BL
-extern double LATTICE_BL;
-extern double TUBE_BL;
-extern double ILD;
+#define	SIZE_ZONE_1   12
+#define	SIZE_ZONE_2   12
+#define	SIZE_ZONE_3   14
+#define	SIZE_ZONE_4   14
+#define	SIZE_ZONE_5   17
 
 //*************** Structures *****************
 
@@ -93,5 +101,25 @@ typedef struct
 	int latticeType;		// lattice type: 0 for graphene, 1 for BN.
 } InPar;
 
-#endif /* On the #ifndef __CONSTANTS_AND_LIBRARIES__ */
+
+//**************** Globals *********************
+// tube BL, lattice BL
+extern double LATTICE_BL;
+extern double TUBE_BL;
+extern double ILD;
 extern double MAX_HEIGHT;
+extern double RCGRAPHENE;
+extern double RCCNT;
+extern double RBTUBE;
+extern double RBLATTICE;
+extern double RNTUBE;
+extern double RNLATTICE;
+
+extern Atom ZONE_1[];
+extern Atom ZONE_2[SIZE_ZONE_2];
+extern Atom ZONE_3[SIZE_ZONE_3];
+extern Atom ZONE_4[SIZE_ZONE_4];
+extern Atom ZONE_5[SIZE_ZONE_5];
+
+
+#endif /* On the #ifndef __CONSTANTS_AND_LIBRARIES__ */

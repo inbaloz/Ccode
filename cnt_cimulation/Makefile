@@ -26,6 +26,7 @@ C_FILES = \
 	SpinningMotion.c \
 	TwodDataToFile.c \
 	TubeToFile.c \
+	SetGlobals.c \
 
 H_FILES = \
 	ArrayToFile.h \
@@ -55,6 +56,7 @@ H_FILES = \
 	SpinningMotion.h \
 	TwodDataToFile.h \
 	TubeToFile.h \
+	SetGlobals.h \
 
 O_FILES = ${C_FILES:.c=.o} # Take the .c files and replace with .o
 

@@ -1,4 +1,5 @@
 #include "Constants_and_libraries.h"
+#include "SetGlobals.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -83,9 +84,7 @@
  */
 
 // declaring the global parameters of the tube's BL, the lattice's BL and the ILD
-double LATTICE_BL;
-double TUBE_BL;
-double ILD;
+
 double MAX_HEIGHT;
 
 int main(int argc, char *argv[])
@@ -185,20 +184,8 @@ int main(int argc, char *argv[])
 	latticeType      = input.latticeType;
 
 //---------------- setting the global parameters ----------------------------
+	SetGlobals(tubeType, latticeType);
 
-	TUBE_BL             = ((tubeType     == 0) ? CNT_BL      : BN_TUBE_BL);
-	LATTICE_BL          = ((latticeType  == 0) ? GRAPHENE_BL : BN_LATTICE_BL);
-
-	if ((tubeType == 0) && (latticeType == 0)) {
-		ILD = CNT_G_ILD;
-	}
-	else if ((tubeType == 1) && (latticeType == 1)) {
-		ILD = BNT_BNL_ILD;
-	}
-	else {
-		ILD = BNT_G_ILD;
-	}
-	
 
 //********************** Step 2 - Calculate tube parameters ********************
 	T = CalculateTranslational(Ch);
