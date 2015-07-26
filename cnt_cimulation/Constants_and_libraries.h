@@ -42,7 +42,7 @@
 #define BNT_BNL_ILD		3.33			// Interlayer difference in Angstroms // TODO Inbal - I found 3.35 for cc and 3.33 for BN
 
 #define NP		(0.01)			// Negligible part;
-#define EXPNORM	(abs(log(NP)))	// ABS(log(0.01)) (log = ln)
+#define EXPNORM	(4.605170186)	// ABS(log(0.01)) (log = ln)
 
 #define WRITE	"w"				// Writing type
 #define PT		0				// Print title for data files? (1 = yes, 0 = no)
