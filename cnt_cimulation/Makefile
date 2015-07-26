@@ -27,6 +27,7 @@ C_FILES = \
 	TwodDataToFile.c \
 	TubeToFile.c \
 	SetGlobals.c \
+	CalculateRIMinMax.c \
 
 H_FILES = \
 	ArrayToFile.h \
@@ -57,6 +58,7 @@ H_FILES = \
 	TwodDataToFile.h \
 	TubeToFile.h \
 	SetGlobals.h \
+	CalculateRIMinMax.h \
 
 O_FILES = ${C_FILES:.c=.o} # Take the .c files and replace with .o
 

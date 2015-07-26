@@ -9,6 +9,7 @@
 #include "aVecLength.h"
 #include "CalculateIntersection.h"
 #include "CalculateTranslational.h"
+#include "CalculateRIMinMax.h"
 #include "CLI.h"
 #include "CutUnitcell.h"
 #include "DuplicateTube.h"
@@ -247,7 +248,10 @@ int main(int argc, char *argv[])
 	if (tubeType == 0 && latticeType == 0) // CNT on graphene
 	{
 		RIMax = effTubeNMax * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2));
+		// CalculateRIMinMax(RIMax, amountOfSteps, tube, tubeN, LATTICE_BL/2, 0, 0);
+		// CalculateRIMinMax(RIMin, amountOfSteps, tube, tubeN, 0, 0, 0);
 		RIMin = effTubeNMin * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
+		// printf ("RIMax: %lf, RIMin: %lf\n", RIMax, RIMin);
 	}
 	else if (tubeType == 1 && latticeType ==1) // BN tube on BN lattice
 	{
@@ -284,11 +288,9 @@ int main(int argc, char *argv[])
 
 	
 //********************** Step 5 - Calculate RI *********************************
-
 	// Initially rotating and spinning the tube as requested (around z axis).
 	Rotate(tube, tubeN, 3, shiftAngle);
 	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
-	
 
 	switch(motionType)
 	{
