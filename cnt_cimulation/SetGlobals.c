@@ -105,7 +105,7 @@ void SetGlobals(int tubeType, int latticeType)
 
 	}
 	else if (tubeType == 0 & latticeType == 1) {
-		RCCNT      = RCCNT_HOMO;
+		RCCNT      = RCCNT_HETERO;
 		RBLATTICE  = RBLATTICE_HETERO;
 		RNLATTICE  = RNLATTICE_HETERO;
 		ILD 	   = BNT_G_ILD;
