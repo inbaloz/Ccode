@@ -1,0 +1,15 @@
+0.0       - Initial time in MD calculation (tini - [femtoseconds]).
+100.0      - End time in MD calculation (tend - [femtoseconds]).
+0.01       - Time step in MD calculation (dt -[Picoseconds]).initial setting=0.0005 3.2 for Quenching
+0.0       - Temperature in MD calculation (T - [Kelvin]).
+1.0       - Interval for printing energy in MD calculation (tConserve - [femtoseconds]).
+10.0       - Interval for printing trajectory in MD calculation (tTraj - [femtoseconds]).
+10        - Number of steps for printing energy in optimization calculation (NConserve).
+1000      - Number of steps for printing trajectory in optimization calculation (NTraj).	
+10000      - number of steps for the optimization calculation (OptTol).	
+1         - Program Flag (0 - MD, 1 - Single point, 2 - Steepest Descent, 3 - Conjugate gradients 4-FIRE).
+1         - Inter-layer Flag (0-molecules (input:atomtype x y z) 1- Curved layered structures (input:atomtype layer x y z) 2- Flat layered structures (input:atomtype layer x y z)) In case 2 the Normal is set to the z (0,0,1) direction whereas in case 1 it is calculated according to an atoms 3 nearest neighbors exluding hydrogen atoms.
+0         - Optimize periodic cell flag (0- dont optimize, 1- optimize cell)	   
+0         - (# of threads for openmp multithreading,0= use max # of threads available)
+4         - Potential_flag( 0=(AIREBO) 1=(AIREBO + TORSION) 2=(AIREBO + TORSION + KC) 3=(Tersoff) 4=(Tersoff + KC) 5=(Tersoff + h-BN ILP)) KC = Kolmogorov and Crespi Interlayer potenial.
+2         -Input_flag(0-(Type_number,layer,x,y,z) 1-(Type_number,layer,x,y,z), 2-(Type_number,layer,lock,x,y,z) 3-(JMOL_Input) 4-(Roberto_type_input)) 

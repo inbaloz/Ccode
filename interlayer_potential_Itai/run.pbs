@@ -1,0 +1,17 @@
+#PBS -N Zig_CNT.243.0.241.0.Ters.KC.Opt
+#PBS -l nodes=1:ppn=16,walltime=2400:00:00
+#PBS -l mem=7000mb
+#PBS -q cores-16
+#PBS -S /bin/tcsh
+#--------------------------------
+echo "Node Name: $HOSTNAME"
+setenv SCRDIR /scratch/$LOGNAME/$PBS_JOBID
+/bin/mkdir -p $SCRDIR
+cd $SCRDIR
+cp $PBS_O_WORKDIR/BN.x $SCRDIR
+cp $PBS_O_WORKDIR/CH.airebo $SCRDIR
+cp $PBS_O_WORKDIR/run.par $SCRDIR
+cp $PBS_O_WORKDIR/Coords.xyz $SCRDIR
+./BN.x
+cp -f $SCRDIR/* $PBS_O_WORKDIR
+rm -rf $SCRDIR
