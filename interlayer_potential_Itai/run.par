@@ -12,4 +12,4 @@
 0         - Optimize periodic cell flag (0- dont optimize, 1- optimize cell)	   
 0         - (# of threads for openmp multithreading,0= use max # of threads available)
 4         - Potential_flag( 0=(AIREBO) 1=(AIREBO + TORSION) 2=(AIREBO + TORSION + KC) 3=(Tersoff) 4=(Tersoff + KC) 5=(Tersoff + h-BN ILP)) KC = Kolmogorov and Crespi Interlayer potenial.
-2         -Input_flag(0-(Type_number,layer,x,y,z) 1-(Type_number,layer,x,y,z), 2-(Type_number,layer,lock,x,y,z) 3-(JMOL_Input) 4-(Roberto_type_input)) 
+1         -Input_flag(0-(Type_number,layer,x,y,z) 1-(Type_number,layer,x,y,z), 2-(Type_number,layer,lock,x,y,z) 3-(JMOL_Input) 4-(Roberto_type_input)) 
