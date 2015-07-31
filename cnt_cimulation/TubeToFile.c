@@ -20,7 +20,7 @@ void TubeToFile(Atom *tube, int tubeN, char *destination)
 
 	for (i = 0; i < tubeN; i++)
 	{
-		fprintf(desFile, "%e %e %e %d\n", tube[i].x, tube[i].y, tube[i].z, tube[i].type);
+		fprintf(desFile, "%lf %lf %lf %d\n", tube[i].x, tube[i].y, tube[i].z, tube[i].type);
 	}
 			
 	fclose(desFile);
