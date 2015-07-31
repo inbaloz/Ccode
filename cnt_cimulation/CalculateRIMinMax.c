@@ -11,8 +11,7 @@ void CalculateRIMinMax(double RIMin, double amountOfSteps, Atom* tube, int tubeN
 	int i, j;
 	double effectiveNum;
 	double currentInteracting;
-	// The sliding (Move) is in the end because when i = 0 we want
-	// the start x,y, so we don't want to slide by the regular step.
+
 	for (i = 0; i < amountOfSteps; i++)
 	{
 		RIMin = 0;
