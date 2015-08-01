@@ -55,6 +55,7 @@
 
 //**************** Useful *********************
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
+#define MAX(X,Y) ((X) > (Y) ? (X) : (Y))
 #define ABS(X)   ((X) >= 0  ? (X) : -(X))
 
 #define	SIZE_ZONE_1   12
@@ -62,6 +63,10 @@
 #define	SIZE_ZONE_3   14
 #define	SIZE_ZONE_4   14
 #define	SIZE_ZONE_5   17
+
+//*************** interlayer potential (Itai and Oded's code) *********
+#define INTERACTION_BUFFER 18 // in [Angstrom]. Note: The maximal interaction distance 
+							 //in Itai's code is 16 [A], I added a buffer.
 
 //*************** Structures *****************
 

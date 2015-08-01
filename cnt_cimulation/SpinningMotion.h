@@ -1,7 +1,10 @@
 #ifndef __SPINNINGMOTION__
 #define __SPINNINGMOTION__
 
-void SpinningMotion(double* RI, double rotationStep, double amountOfSteps,
-					Atom* tube, int tubeN, double xShift, double yShift, int latticeType);
+#include "Constants_and_libraries.h"
+
+void SpinningMotion(double* RI, double spinningStep, double amountOfSteps,
+					Atom* tube, int tubeN, Atom* surfaceLattice, int surfaceN,
+					double xShift, double yShift, int latticeType, char* prefix);
 
 #endif
