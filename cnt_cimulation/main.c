@@ -10,6 +10,7 @@
 #include "CalculateIntersection.h"
 #include "CalculateTranslational.h"
 #include "CLI.h"
+#include "CreateSurface.h"
 #include "CutUnitcell.h"
 #include "DuplicateTube.h"
 #include "CutLastPartOfTube.h"
@@ -27,7 +28,7 @@
 #include "SlidingMotion.h"
 #include "SpinningMotion.h"
 #include "TwodDataToFile.h"
-#include "TubeToFile.h"
+#include "AtomsToFile.h"
 
 #include "FindInteracting.h"
 
@@ -91,7 +92,6 @@ int main(int argc, char *argv[])
 {
 	int i;					// Loop counter.
 	char prefix[80];		// File prefixes.
-	char tubeFile[86];		// Tube file name
 
 //-----------------from configuration ----------------------------
 
@@ -130,6 +130,8 @@ int main(int argc, char *argv[])
 	Atom* tube;				// The final tube
 	int tubeN;				// The number of atoms in the tube
 	Atom* lattice;			// The lattice that will be used to create the tube.
+	Atom* surfaceLattice;	// The lattice that will be used to create the surface.
+	int surfaceN;			// The number of atoms in the lattice.
 	int latticeN;			// The number of atoms in the lattice
 	double RIMin;			// The minimum surface
 	double RIMax;			// The maximum surface
@@ -195,7 +197,7 @@ int main(int argc, char *argv[])
 	MAX_HEIGHT = radius;
 	length = aVecLength(T) * unitcellN;
 
-//********************** Step 3 - Create the tube ******************************
+//********************** Step 3 - Create the tube and surface ******************************
 
 	// The function needs the future unitcell borders (before rotating and moving)
 	// to create a lattice in a suitable size:
@@ -219,17 +221,15 @@ int main(int argc, char *argv[])
 		CutLastPartOfTube(tube, &tubeN, percentTruncated);
 	}
 
+	printf("number of atoms: %d\n",tubeN);
+
 	// Free the unit tube, it isn't needed anymore:
 	free(tubeUnit);
+
 	// This lattice was used to create the tube. Now we free it for later reuse:
-	sprintf(tubeFile, "%s - tube", prefix);
-	TubeToFile(tube, tubeN, tubeFile);
-	printf("number of atoms: %d\n",tubeN);
 	free(lattice);
-	// write tube to file
-	sprintf(tubeFile, "%s - tube", prefix);
-	TubeToFile(tube, tubeN, tubeFile);
-	//printf("number of atoms: %d\n",tubeN);
+	
+	surfaceN = CreateSurface(&surfaceLattice, length, radius, latticeType); // Create the surface
 
 //********************** Step 4 - Normalizie RI ********************************
 	double effTubeNMax, effTubeNMin;
@@ -305,8 +305,8 @@ int main(int argc, char *argv[])
 		// Rotating by "rotSpinStart":
 		RotateShift(tube, tubeN, rotSpinStart, shiftAngle, ILD + radius);
 		// Calculating RI:
-		RotationMotion(RI, rotSpinStep, amountOfSteps, tube, tubeN, radius, 
-			           shiftAngle, xShift, yShift, latticeType);
+		RotationMotion(RI, rotSpinStep, amountOfSteps, tube, tubeN, surfaceLattice, 
+					   surfaceN, radius, shiftAngle, xShift, yShift, latticeType, prefix);
 		// Printing the RI and rotSpinValues to a file:
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		Rad2Deg(rotSpinValues, amountOfSteps);
@@ -326,8 +326,12 @@ int main(int argc, char *argv[])
 		}
 		// Spinning by "rotSpinStart":
 		Rotate(tube, tubeN, 3, rotSpinStart);
+		
 		// Calculating RI:
-		SpinningMotion(RI, rotSpinStep, amountOfSteps, tube, tubeN, xShift, yShift, latticeType);			
+
+		SpinningMotion(RI, rotSpinStep, amountOfSteps, tube, tubeN, 
+					   surfaceLattice, surfaceN, xShift, yShift, latticeType, prefix);			
+		
 		// Printing the RI and rotSpinValues to a file:
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		Rad2Deg(rotSpinValues, amountOfSteps);
@@ -348,7 +352,9 @@ int main(int argc, char *argv[])
 			slideValues[i] = slideStep * i;
 		}
 		// Calculating RI:
-		SlidingMotion(RI, xStep, yStep, amountOfSteps, tube, tubeN, xStart, yStart, latticeType);			
+		SlidingMotion(RI, xStep, yStep, amountOfSteps, tube, tubeN, surfaceLattice,
+				      surfaceN, xStart, yStart, latticeType, prefix);
+
 		// Printing the RI and x-yValues to a file:
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		TwodDataToFile(slideValues, RI, amountOfSteps, strcat(prefix, " - Sliding RI Data"));
@@ -382,9 +388,12 @@ int main(int argc, char *argv[])
 		}
 		// Rotating by "rotSpinStart":
 		RotateShift(tube, tubeN, rotSpinStart, shiftAngle, ILD + radius);
+
 		// Calculating RI:
 		PerfectRotationMotion(RI, xStart, yStart, xStep, yStep, rotSpinStep, amountOfSteps, 
-			                  tube, tubeN, radius, shiftAngle, latticeType);
+			                  tube, tubeN, surfaceLattice, surfaceN,
+			                  radius, shiftAngle, latticeType, prefix);
+		
 		// Printing the RI and x-yValues to a file:
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		TwodDataToFile(slideValues, RI, amountOfSteps, strcat(prefix, " - Perfect Rotation RI Data"));

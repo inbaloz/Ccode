@@ -1,6 +1,7 @@
 #include "Constants_and_libraries.h"
 #include "PerfectRotationMotion.h"
 #include "RotateShift.h"
+#include "WriteCoordinates.h"
 #include "FindInteracting.h"
 #include <math.h>
 
@@ -19,10 +20,15 @@
 
 void PerfectRotationMotion(double* RI, double xStart, double yStart, double xStep, double yStep,
 							double rotationStep, double amountOfSteps, 
-							Atom* tube, int tubeN, double radius, double shiftAngle, int latticeType)
+							Atom* tube, int tubeN, Atom* surfaceLattice, int surfaceN,
+							double radius, double shiftAngle, 
+							int latticeType, char* prefix)
 {
 	int i, j;
 	double effectiveNum;
+	double xShift = xStart;
+	double yShift = yStart;
+	
 	// The rotation (RotateShift) is in the end because when i = 0 we want
 	// the start angle, so we don't want to rotate by the regular step.
 	// Same goes with x-yStep.
@@ -34,11 +40,18 @@ void PerfectRotationMotion(double* RI, double xStart, double yStart, double xSte
 			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (MAX_HEIGHT - ILD) );
 			if (effectiveNum > NP)
 			{
-				RI[i] = RI[i] + effectiveNum * FindInteracting(tube[j], xStart, yStart, latticeType);
+				RI[i] = RI[i] + effectiveNum * FindInteracting(tube[j], xShift, yShift, latticeType);
 			}
 		}
+
+
+		WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 
+						  xShift, yShift, i, prefix); 
+
 		RotateShift(tube, tubeN, rotationStep, shiftAngle, ILD + radius);
-		xStart = xStart + xStep;
-		yStart = yStart + yStep;
+		xShift = xShift + xStep;
+		yShift = yShift + yStep;
+
+
 	}
 }

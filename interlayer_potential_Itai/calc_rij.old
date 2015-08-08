@@ -1,0 +1,433 @@
+#include "declarations.h"
+
+/***********************************************************/
+/* Calculate and fill the following arrays:                */
+/*                                                         */
+/* rij[Natoms*Natoms] - interatom distance array.          */
+/*                                                         */
+/* NBond[Natoms]      - number of atoms bonded to each     */
+/*                      atom - two atoms are consedered to */
+/*			be bonded if BO_ij != 0 namely if  */
+/*                      their distance is less than 3A     */
+/*			(BOCutoff).                        */
+/*                                                         */
+/* Continue explanation ...                                */
+/***********************************************************/
+
+void calc_rij(int *NBond, int *Bonded, int *BondNum, int Natoms, atom *particle, point L, double *rij,double *Fc,BondParamsStruct *BondParams,int *Neighb,int *NNeighb)
+{
+  //#pragma omp parallel firstprivate(Natoms) shared(Natoms,NBond,Bonded,particle,L,rij,Fc,BondNum) 
+  //{
+  int atomi, atomj,typei,typej;
+  double rx, ry, rz;
+  double Tersoff_R,Tersoff_D;
+  
+#pragma omp parallel for private(atomj)
+  for(atomi=0 ; atomi < Natoms ; atomi++){
+    NBond[atomi]   = 0;
+    NNeighb[atomi] = 0;
+    for(atomj=0 ; atomj < MaxNBond ; atomj++){
+      Bonded[atomi*MaxNBond + atomj] = -1;
+    }
+    for(atomj=0 ; atomj < MaxNeighb ; atomj++){
+      Neighb[atomi*MaxNBond + atomj] = -1;
+    }
+    for(atomj=0 ; atomj < Natoms ; atomj++){
+      BondNum[atomi*Natoms + atomj] = -1;
+    }
+  }
+  
+  
+#pragma omp parrallel for firstprivate(Natoms) private(rx,ry,rz,typei,typej,Tersoff_R,Tersoff_D,atomj)
+  for(atomi=0 ; atomi < Natoms ; atomi++){
+    rij[atomi*Natoms + atomi] = 0.0;
+    typei = particle[atomi].type;
+    for(atomj=0 ; atomj < atomi ; atomj++){
+      typej=particle[atomj].type;
+      Tersoff_R   = BondParams[typei*NAtomParams + typej].Tersoff_R;
+      Tersoff_D   = BondParams[typei*NAtomParams + typej].Tersoff_D;
+      
+      rx = particle[atomi].r[0] - particle[atomj].r[0];
+      ry = particle[atomi].r[1] - particle[atomj].r[1];
+      rz = particle[atomi].r[2] - particle[atomj].r[2];
+      
+      rx -= L.x * rint(rx / (L.x + TINY));
+      ry -= L.y * rint(ry / (L.y + TINY));
+      rz -= L.z * rint(rz / (L.z + TINY));
+      
+      rij[atomi*Natoms + atomj] = sqrt(sqr(rx) + sqr(ry) + sqr(rz));
+      
+      rij[atomj*Natoms + atomi] = rij[atomi*Natoms + atomj];
+      
+      if(rij[atomi*Natoms + atomj] < Tersoff_R+Tersoff_D){
+	
+	Bonded[atomi*MaxNBond + NBond[atomi]] = atomj;
+	
+	Bonded[atomj*MaxNBond + NBond[atomj]] = atomi;
+	
+	BondNum[atomi*Natoms + atomj] = NBond[atomi];
+	
+	BondNum[atomj*Natoms + atomi] = NBond[atomj];
+	
+	if(rij[atomi*Natoms + atomj] < Tersoff_R-Tersoff_D){
+	  
+	  Fc[atomi*Natoms + atomj] = 1;
+	  
+	  Fc[atomj*Natoms + atomi] = 1;
+	}
+	else{
+	  
+	  Fc[atomi*Natoms + atomj] = 1/2-1/2*sin(PIE*0.5*(rij[atomi*Natoms + atomj] - Tersoff_R)/Tersoff_D);
+	  
+	  Fc[atomj*Natoms + atomi] = 1/2-1/2*sin(PIE*0.5*(rij[atomi*Natoms + atomj] - Tersoff_R)/Tersoff_D);
+	}
+	
+	//#pragma omp atomic
+	NBond[atomi]++;
+	//#pragma omp atomic
+	NBond[atomj]++;
+	
+	if(NBond[atomi] == MaxNBond ){
+	  cerr<<"Exceeded maximum number of bonded atoms for atom "<<atomi<<"! Ending session.\n";
+	  exit(0);
+	}
+	
+	if(NBond[atomj] == MaxNBond ){
+	  cerr<<"Exceeded maximum number of bonded atoms for atom "<<atomj<<"! Ending session.\n";
+	  exit(0);
+	}
+      }
+      else {
+	Fc[atomi*Natoms + atomj] = 0;
+	Fc[atomj*Natoms + atomi] = 0;
+      }
+      
+      if((rij[atomi*Natoms + atomj] < non_bond_cut) && (particle[atomi].layer != particle[atomj].layer)){
+	Neighb[atomi*MaxNeighb + NNeighb[atomi]] = atomj;
+	NNeighb[atomi]++;
+	if(NNeighb[atomi] == MaxNeighb){
+	  cerr<<"Exceeded maximum number of neighbors for atom "<<atomi<<"! Ending session.\n";
+	  exit(0);
+	}
+      }
+      
+    }      
+  }
+  //}
+}
+
+
+void calc_angles(double *angle, int Natoms, int *NBond, int *Bonded, double *rij, atom *particle,point L)
+{
+    // This routine calculates and fills the angles array.  For each
+  // atom j all the neighboring atom pairs (i and k) are considered
+  // and the angle ijk is calculated, where j is the central atom. The
+  // calculation is done using the scalar product formula and the acos
+  // function.
+  //#pragma omp parallel
+  //{
+  int i, k, atomi, atomk, atomj, index;
+  double DummyAngle,inside_acos;
+  point rji, rjk;
+  
+  DummyAngle = -1.0;
+  
+#pragma omp parallel for shared(DummyAngle) private(i,k,atomi,atomk,index,inside_acos,rji,rjk)
+  for(atomj=0 ; atomj < Natoms ; atomj++){ // Go over all central atoms j.
+    
+    for(i=0 ; i < NBond[atomj] ; i++){ // Go over all j neighbors i.
+      atomi = Bonded[atomj*MaxNBond + i];
+      rji.x = particle[atomi].r[0] - particle[atomj].r[0];
+      rji.y = particle[atomi].r[1] - particle[atomj].r[1];
+      rji.z = particle[atomi].r[2] - particle[atomj].r[2];
+      
+      for(k=0 ; k < i ; k++){ // Go over all j neighbors k != i.
+	index = atomj * MaxNBond * MaxNBond + i * MaxNBond + k;
+	atomk = Bonded[atomj*MaxNBond + k];
+	rjk.x = particle[atomk].r[0] - particle[atomj].r[0];
+	rjk.y = particle[atomk].r[1] - particle[atomj].r[1];
+	rjk.z = particle[atomk].r[2] - particle[atomj].r[2];
+	inside_acos = ((rji.x*rjk.x + rji.y*rjk.y + rji.z*rjk.z) / (rij[atomj*Natoms+atomi] * rij[atomj*Natoms+atomk]));
+	
+	if (fabs(inside_acos) < 1.0){
+	  angle[index] = acos((rji.x*rjk.x + rji.y*rjk.y + rji.z*rjk.z) / (rij[atomj*Natoms+atomi] * rij[atomj*Natoms+atomk]));
+	}
+	else if (inside_acos >= 1.0) angle[index] = 0.0;
+	else angle[index] = PIE;
+      }
+      
+      k = i;
+      index = atomj * MaxNBond * MaxNBond + i * MaxNBond + k;
+      angle[index] = DummyAngle;
+      
+      for(k=i+1 ; k < NBond[atomj] ; k++){ // Go over all j neighbors k != i.
+	index = atomj * MaxNBond * MaxNBond + i * MaxNBond + k;
+	atomk = Bonded[atomj*MaxNBond + k];
+	
+	rjk.x = particle[atomk].r[0] - particle[atomj].r[0];
+	rjk.y = particle[atomk].r[1] - particle[atomj].r[1];
+	rjk.z = particle[atomk].r[2] - particle[atomj].r[2];
+	
+	inside_acos = ((rji.x*rjk.x + rji.y*rjk.y + rji.z*rjk.z) / (rij[atomj*Natoms+atomi] * rij[atomj*Natoms+atomk]));
+	
+	if (fabs(inside_acos) < 1.0){
+	  angle[index] = acos((rji.x*rjk.x + rji.y*rjk.y + rji.z*rjk.z) / (rij[atomj*Natoms+atomi] * rij[atomj*Natoms+atomk]));
+	}
+	else if (inside_acos >= 1.0) angle[index] = 0.0;
+	else angle[index] = PIE;
+	
+      }
+      
+      for(k=NBond[atomj] ; k < MaxNBond ; k++){
+	index = atomj * MaxNBond * MaxNBond + i * MaxNBond + k;
+	angle[index] = DummyAngle;
+      }
+    }
+    
+    for(i=NBond[atomj] ; i < MaxNBond ; i++){
+      for(k=0 ; k < MaxNBond ; k++){
+	index = atomj * MaxNBond * MaxNBond + i * MaxNBond + k;
+	angle[index] = DummyAngle;
+      }
+    }
+    // }
+  }
+}
+/*********************************************************************************************************/
+
+double calc_dihedral(int atomi,int atomj, int atomk, int atoml, atom *particle,point L)
+{
+  // This routine calculates and fills the omega array.  For each
+  // two neighboring atoms jk all the neighboring atoms (i and l where i is a neighbor of j and l is a neighbor of k)
+  // are considered and the dihedral angle ijkl is calculated, where jk is the central atom pair. The
+  // calculation is done using the atan funtion.
+  
+  double a,b,size_jk,Omega;
+  
+  point rji,rjk,rkl,Normal_ij_jk,Normal_jk_kl;
+  
+  rji.x = particle[atomj].r[0] - particle[atomi].r[0];
+  rji.y = particle[atomj].r[1] - particle[atomi].r[1];
+  rji.z = particle[atomj].r[2] - particle[atomi].r[2];
+  
+  rji.x -= L.x * rint(rji.x / (L.x + TINY));
+  rji.y -= L.y * rint(rji.y / (L.y + TINY));
+  rji.z -= L.z * rint(rji.z / (L.z + TINY));
+  
+  rjk.x = particle[atomk].r[0] - particle[atomj].r[0];
+  rjk.y = particle[atomk].r[1] - particle[atomj].r[1];
+  rjk.z = particle[atomk].r[2] - particle[atomj].r[2];
+  
+  rjk.x -= L.x * rint(rjk.x / (L.x + TINY));
+  rjk.y -= L.y * rint(rjk.y / (L.y + TINY));
+  rjk.z -= L.z * rint(rjk.z / (L.z + TINY));
+  
+  rkl.x = particle[atoml].r[0] - particle[atomk].r[0];
+  rkl.y = particle[atoml].r[1] - particle[atomk].r[1];
+  rkl.z = particle[atoml].r[2] - particle[atomk].r[2];
+  
+  rkl.x -= L.x * rint(rkl.x / (L.x + TINY));
+  rkl.y -= L.y * rint(rkl.y / (L.y + TINY));
+  rkl.z -= L.z * rint(rkl.z / (L.z + TINY));
+  
+  Normal_ij_jk.x =  rji.y * rjk.z - rji.z * rjk.y;
+  Normal_ij_jk.y =-(rji.x * rjk.z - rji.z * rjk.x);
+  Normal_ij_jk.z =  rji.x * rjk.y - rji.y * rjk.x;
+  
+  Normal_jk_kl.x =  rjk.y * rkl.z - rjk.z * rkl.y;
+  Normal_jk_kl.y =-(rjk.x * rkl.z - rjk.z * rkl.x);
+  Normal_jk_kl.z =  rjk.x * rkl.y - rjk.y * rkl.x;
+  
+  size_jk = sqrt(sqr(rjk.x) + sqr(rjk.y) + sqr(rjk.z));
+  a       = size_jk*(rji.x*Normal_jk_kl.x + rji.y*Normal_jk_kl.y + rji.z*Normal_jk_kl.z);
+  b       = Normal_ij_jk.x*Normal_jk_kl.x + Normal_ij_jk.y*Normal_jk_kl.y + Normal_ij_jk.z*Normal_jk_kl.z;
+  Omega = atan2(a,b);
+  return(Omega);
+}
+void calc_Normal(int Natoms,int *Normal_atom,atom *particle,point *Normal)
+{
+  //#pragma omp parallel
+  //{
+  int atomi,atomj,atomk,atoml;
+  double vector_1x,vector_1y,vector_1z;
+  double vector_2x,vector_2y,vector_2z;
+  double Normal_length;
+  
+  //#pragma omp for
+#pragma omp parallel for private(atomi,atomk,atomj,vector_1x,vector_1y,vector_1z,vector_2x,vector_2y,vector_2z,Normal_length)
+  for(atomi=0; atomi < Natoms; atomi++){
+    Normal[atomi].x = 0.0;
+    Normal[atomi].y = 0.0;
+    Normal[atomi].z = 0.0;
+    if (particle[atomi].type ==1 || particle[atomi].lock == 1 ){
+      Normal[atomi].x = 0.0;
+      Normal[atomi].y = 0.0;
+      Normal[atomi].z = 0.0;
+    }
+    else{
+      atomj=Normal_atom[atomi*3 + 0];
+      atomk=Normal_atom[atomi*3 + 1];
+      atoml=Normal_atom[atomi*3 + 2];
+      
+      vector_1x = particle[atomj].r[0] - particle[atomk].r[0];
+      vector_1y = particle[atomj].r[1] - particle[atomk].r[1];
+      vector_1z = particle[atomj].r[2] - particle[atomk].r[2];
+      
+      vector_2x = particle[atoml].r[0] - particle[atomk].r[0];
+      vector_2y = particle[atoml].r[1] - particle[atomk].r[1];
+      vector_2z = particle[atoml].r[2] - particle[atomk].r[2];
+      
+      Normal[atomi].x = vector_1y*vector_2z - vector_2y*vector_1z;
+      Normal[atomi].y = vector_1z*vector_2x - vector_1x*vector_2z;
+      Normal[atomi].z = vector_1x*vector_2y - vector_1y*vector_2x;
+      
+      Normal_length   = sqrt(sqr(Normal[atomi].x)+sqr(Normal[atomi].y)+sqr(Normal[atomi].z));
+      
+      Normal[atomi].x = Normal[atomi].x/(Normal_length);
+      Normal[atomi].y = Normal[atomi].y/(Normal_length);
+      Normal[atomi].z = Normal[atomi].z/(Normal_length);
+      //cerr<<"Normal[atomi].x="<<Normal[atomi].x<<endl;
+      //cerr<<"Normal[atomi].y="<<Normal[atomi].y<<endl;
+      //cerr<<"Normal[atomi].z="<<Normal[atomi].z<<endl;
+      //Normal[atomi].x = 0.0;
+      //Normal[atomi].y = 0.0;
+      //Normal[atomi].z = 1.0;
+    }
+  }
+  //}
+}
+void calc_dNormal_k(int atomi,int atomn,int dir,dr_ij *dN,atom *particle,point *Normal,int *Normal_atom)
+{
+  double vector_1x,vector_1y,vector_1z;
+  double vector_2x,vector_2y,vector_2z;
+  int atomj,atomk,atoml;
+  double Normal_length,d_Norm_length;
+  double Normalx,Normaly,Normalz;
+  atomj=Normal_atom[atomi*3 + 0];
+  atomk=Normal_atom[atomi*3 + 1];
+  atoml=Normal_atom[atomi*3 + 2];
+  
+  vector_1x = particle[atomj].r[0] - particle[atomk].r[0];
+  vector_1y = particle[atomj].r[1] - particle[atomk].r[1];
+  vector_1z = particle[atomj].r[2] - particle[atomk].r[2];
+  
+  vector_2x = particle[atoml].r[0] - particle[atomk].r[0];
+  vector_2y = particle[atoml].r[1] - particle[atomk].r[1];
+  vector_2z = particle[atoml].r[2] - particle[atomk].r[2];
+  
+  Normalx = vector_1y*vector_2z - vector_2y*vector_1z;
+  Normaly = vector_1z*vector_2x - vector_1x*vector_2z;
+  Normalz = vector_1x*vector_2y - vector_1y*vector_2x;
+  
+  Normal_length   = sqrt(sqr(Normalx)+sqr(Normaly)+sqr(Normalz));
+
+  //**********
+  //Normal[atomi].x = vector_1y*vector_2z - vector_2y*vector_1z;
+  //Normal[atomi].y = vector_1z*vector_2x - vector_1x*vector_2z;
+  //Normal[atomi].z = vector_1x*vector_2y - vector_1y*vector_2x;
+  //*********
+  //d_vector_1_jx = particle[atomj].r[0];
+  //d_vector_2 = 0;
+  
+  
+  if (particle[atomi].type == 1 || particle[atomi].lock == 1){
+    dN[0].r[0] = 0.0;
+    dN[0].r[1] = 0.0;
+    dN[0].r[2] = 0.0;
+  }
+  else{
+    if (atomn == atomj){
+      if (dir == 0){
+	dN[0].r[0] = 0.0;
+	dN[0].r[1] = -vector_2z;
+	dN[0].r[2] = vector_2y;
+      }
+      else if(dir == 1){
+	dN[0].r[0] = vector_2z;
+	dN[0].r[1] = 0.0;
+	dN[0].r[2] =-vector_2x;
+      }
+      else if(dir == 2){
+	dN[0].r[0] =-vector_2y;
+	dN[0].r[1] = vector_2x;
+	dN[0].r[2] = 0.0;
+      }
+    }
+    else if (atomn == atomk){
+      if (dir == 0){
+	dN[0].r[0] = 0.0;
+	dN[0].r[1] =-vector_1z + vector_2z;
+	dN[0].r[2] =-vector_2y + vector_1y;
+      }
+      else if(dir == 1){
+	dN[0].r[0] = -vector_2z + vector_1z;
+	dN[0].r[1] = 0.0;
+	dN[0].r[2] = -vector_1x + vector_2x;
+      }
+      else if(dir == 2){
+	dN[0].r[0] =-vector_1y + vector_2y;
+      dN[0].r[1] =-vector_2x + vector_1x;
+      dN[0].r[2] = 0.0;
+      }
+    }
+    else if (atomn==atoml){
+      if (dir == 0){
+	dN[0].r[0] = 0.0;
+	dN[0].r[1] =vector_1z;
+	dN[0].r[2] =-vector_1y;
+      }
+      else if(dir == 1){
+	dN[0].r[0] =-vector_1z;
+	dN[0].r[1] = 0.0;
+	dN[0].r[2] =vector_1x;
+      }
+      else if(dir == 2){
+	dN[0].r[0] =vector_1y;
+	dN[0].r[1] =-vector_1x;
+	dN[0].r[2] = 0.0;
+      }
+    }
+    else{
+      dN[0].r[0] =0.0;
+      dN[0].r[1] =0.0;
+      dN[0].r[2] =0.0;
+    }
+    d_Norm_length = pow(Normal_length,-3.0)*(Normalx*dN[0].r[0] + Normaly*dN[0].r[1] + Normalz*dN[0].r[2]);
+    dN[0].r[0]= dN[0].r[0]/Normal_length-Normalx*d_Norm_length;
+    dN[0].r[1]= dN[0].r[1]/Normal_length-Normaly*d_Norm_length;
+    dN[0].r[2]= dN[0].r[2]/Normal_length-Normalz*d_Norm_length;
+  }
+  //dN[0].r[0]= 0.0;
+  //dN[0].r[1]= 0.0;
+  //dN[0].r[2]= 0.0;
+}
+void set_Normal_atom(double *rij,int Natoms,point *Normal,atom *particle,int *Normal_atom)
+{
+  //This function fills the Normal_atom array of the 3 nearest neighbors surrounding an atom which we use to calculate its normal. 
+  
+  int n,atomj,atomi;
+ 
+  n=0;
+  
+  for(atomi=0; atomi < Natoms; atomi++){
+    n=0;
+    for(atomj = 0;atomj < Natoms;atomj++){
+      if (atomi == atomj);
+      else{
+	if((rij[atomi*Natoms + atomj] < Normal_cuttoff) && (particle[atomi].layer==particle[atomj].layer)){
+	  Normal_atom[atomi*3+n] = atomj;
+	  
+	  n++;
+	}
+      }
+    }
+    //cerr<<"atomi="<<atomi<<endl;
+    //cerr<<"atomi type="<<particle[atomi].type<<endl;
+    //cerr<<"n="<<n<<endl;
+    
+    if (n != 3 && particle[atomi].type != 1 && particle[atomi].lock !=1 ){
+    cerr<<"Error in set Normal_atom function with atom="<<atomi<<": each atom should have three nearest neighbors excluding hydorgens"<<" atom type="<<particle[atomi].type<<" lock="<<particle[atomi].lock<<" num of neighbors="<<n<<endl;
+    exit(0);
+    }
+  }
+}

@@ -2,6 +2,7 @@
 #include "RotationMotion.h"
 #include "RotateShift.h"
 #include "FindInteracting.h"
+#include "WriteCoordinates.h"
 #include <math.h>
 
 
@@ -16,12 +17,15 @@
 // the tube has been already rotated by rotationStart.
 
 void RotationMotion(double* RI, double rotationStep, int amountOfSteps,
-					Atom* tube, int tubeN, double radius, double shiftAngle, 
-					double xShift, double yShift, int latticeType)
+					Atom* tube, int tubeN, Atom* surfaceLattice, int surfaceN, 
+					double radius, double shiftAngle, 
+					double xShift, double yShift, int latticeType,
+					char* prefix)
 {
 	int i, j;
 	double effectiveNum;
 	double currentInteracting;
+
 	// The rotation (RotateShift) is in the end because when i = 0 we want
 	// the start angle, so we don't want to rotate by the regular step.
 	for (i = 0; i < amountOfSteps; i++)
@@ -36,6 +40,10 @@ void RotationMotion(double* RI, double rotationStep, int amountOfSteps,
 				RI[i] = RI[i] + effectiveNum * currentInteracting;
 			}
 		}
+
+		WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 
+						  xShift, yShift, i, prefix);
+
 		RotateShift(tube, tubeN, rotationStep, shiftAngle, ILD + radius);
 	}
 }
