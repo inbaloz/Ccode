@@ -8,6 +8,7 @@ for each Configuration in cinfigurations: (181)
 import os
 import shutil
 import subprocess
+from glob import glob
 
 PBS_SEND_COMMAND = "qsub"
 DEFAULT_COORDS_FILENAME = "Coords.xyz"
@@ -62,8 +63,10 @@ def run_pbs(code_dir):
 	return not err
 
 def main():
-	send_config_to_pbs("/home/inbaloz/Coords.xyz", 0, 
-		"/home/inbaloz/Projects/NT_on_surfaces/interlayer_potential_Itai")
+	code_path = "/home/inbaloz/Projects/NT_on_surfaces/interlayer_potential_Itai"
+	all_configs = glob("/home/inbaloz/Projects/configs_RI/sliding_paper*atoms*")
+	for idx, config_file in enumerate(all_configs):
+		send_config_to_pbs(config_file, idx, code_path)
 
 if __name__ == '__main__':
 	main()
