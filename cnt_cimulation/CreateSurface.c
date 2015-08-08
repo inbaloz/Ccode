@@ -20,12 +20,12 @@ int CreateSurface(Atom** surfaceLattice, double length, double radius, int latti
 
 	xMax = 2 * radius + 2 * (INTERACTION_BUFFER + LATTICE_HORIZD);
 	yMax = 1 * length + 2 * (INTERACTION_BUFFER + LATTICE_HIGHT);
-	squareEdge = MAX(xMax,yMax);
+	squareEdge = MAX(xMax, yMax);
 
 
 	surfaceN = LatticeCreator(surfaceLattice, xMin, yMin, squareEdge, squareEdge, latticeType);
 
-	Move(*surfaceLattice, surfaceN, squareEdge/2, squareEdge/2, 0);
+	Move(*surfaceLattice, surfaceN, -squareEdge/2, -squareEdge/2, 0);
 
 	return surfaceN;
 
