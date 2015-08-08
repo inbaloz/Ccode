@@ -7,6 +7,7 @@ C_FILES = \
 	CutUnitcell.c \
 	DuplicateTube.c \
 	CutLastPartOfTube.c \
+	CreateSurface.c \
 	FixGapsInTube.c \
 	EffectiveNum.c \
 	FindInteracting.c \
@@ -25,8 +26,9 @@ C_FILES = \
 	SlidingMotion.c \
 	SpinningMotion.c \
 	TwodDataToFile.c \
-	TubeToFile.c \
+	AtomsToFile.c \
 	SetGlobals.c \
+	WriteCoordinates.c \
 
 H_FILES = \
 	ArrayToFile.h \
@@ -38,6 +40,7 @@ H_FILES = \
 	CutUnitcell.h \
 	DuplicateTube.h \
 	CutLastPartOfTube.h \
+	CreateSurface.h \
 	FixGapsInTube.h \
 	EffectiveNum.h \
 	FindInteracting.h \
@@ -55,8 +58,9 @@ H_FILES = \
 	SlidingMotion.h \
 	SpinningMotion.h \
 	TwodDataToFile.h \
-	TubeToFile.h \
+	AtomsToFile.h \
 	SetGlobals.h \
+	WriteCoordinates.h \
 
 O_FILES = ${C_FILES:.c=.o} # Take the .c files and replace with .o
 

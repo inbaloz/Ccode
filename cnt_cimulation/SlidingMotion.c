@@ -2,17 +2,18 @@
 #include "SlidingMotion.h"
 #include "FindInteracting.h"
 #include "Move.h"
+#include "WriteCoordinates.h"
 #include <math.h>
-// input:
-
-
 
 void SlidingMotion(double* RI, double xStep, double yStep, double amountOfSteps,
-				   Atom* tube, int tubeN, double xShift, double yShift, int latticeType)
+				   Atom* tube, int tubeN, Atom* surfaceLattice, int surfaceN, double xShift, 
+				   double yShift, int latticeType,
+				   char* prefix)
 {
 	int i, j;
 	double effectiveNum;
 	double currentInteracting;
+
 	// The sliding (Move) is in the end because when i = 0 we want
 	// the start x,y, so we don't want to slide by the regular step.
 	for (i = 0; i < amountOfSteps; i++)
@@ -27,6 +28,10 @@ void SlidingMotion(double* RI, double xStep, double yStep, double amountOfSteps,
 				RI[i] = RI[i] + effectiveNum * currentInteracting;
 			}
 		}
+		
+		WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 
+						  xShift, yShift, i, prefix);
+
 		// Move(tube, tubeN, xStep, yStep, 0);
 		xShift = xShift - xStep;
 		yShift = yShift - yStep;
