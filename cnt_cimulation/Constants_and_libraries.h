@@ -49,9 +49,9 @@
 #define DUMMY_TYPE '\xff'		// dummy type for dummy atoms - atoms we want to earase eventually
 
 //*************** atom types ******************
-#define C_type 0
-#define N_type 1
-#define B_type 2
+#define C_type 6
+#define N_type 7
+#define B_type 5
 
 //**************** Useful *********************
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
