@@ -1,0 +1,4 @@
+*.x
+log.dat
+Single_point_Energy.dat
+Single_point_traj.xyz
