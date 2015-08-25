@@ -84,15 +84,22 @@ def run_pbs(code_dir):
 	print err
 	return not err
 
+def wait_for_pbs_to_end(index, code_path, sleep_intervals=5):
+	file_path = os.path.join(code_path, "SPE.%d.dat" % index)
+	while not os.path.exists(file_path):
+		time.sleep(5)
+	return True
+
 def main():
-	code_path = "/home/inbaloz/Projects/NT_on_surfaces/interlayer_potential_Itai"
+	code_path = "/home/inbaloz/Projects/NT_on_surfaces/KC_RI_Itai"
 	all_configs = glob("/home/inbaloz/Projects/configs_RI/sliding_paper*atoms*")
 	all_configs.sort(key=lambda x: int(x.split(" ")[-1]))
-	print all_configs
+	# print all_configs
 	for idx, config_file in enumerate(all_configs):
-		if 0 < idx <= 20:
+		if 0 <= idx < 20:
 			time.sleep(5)
 			send_config_to_pbs(config_file, idx, code_path, use_kc=True)
+			wait_for_pbs_to_end(idx, code_path)
 
 if __name__ == '__main__':
 	main()
