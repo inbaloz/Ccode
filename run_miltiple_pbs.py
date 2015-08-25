@@ -8,6 +8,7 @@ for each Configuration in cinfigurations: (181)
 import os
 import shutil
 import subprocess
+import time
 from glob import glob
 
 PBS_SEND_COMMAND = "qsub"
@@ -20,7 +21,7 @@ DEFAULT_PBS_CODE = """#PBS -N Zig_CNT.243.0.241.0.Ters.KC.Opt
 #PBS -S /bin/tcsh
 #--------------------------------
 echo "Node Name: $HOSTNAME"
-setenv SCRDIR /scratch/$LOGNAME/$PBS_JOBID
+setenv SCRDIR /scratch/${LOGNAME}_%d/$PBS_JOBID
 /bin/mkdir -p $SCRDIR
 cd $SCRDIR
 cp $PBS_O_WORKDIR/27.5.14_MD.x $SCRDIR
@@ -29,7 +30,7 @@ cp $PBS_O_WORKDIR/run.par $SCRDIR
 cp $PBS_O_WORKDIR/Coords.xyz $SCRDIR
 ./27.5.14_MD.x
 cp -f $SCRDIR/* $PBS_O_WORKDIR
-cp -f $SRCDIR/Single_point_Energy.dat $PBS_O_WORKDIR/%s
+cp -f $SCRDIR/Single_point_Energy.dat $PBS_O_WORKDIR/%s
 rm -rf $SCRDIR
 """
 
@@ -49,7 +50,7 @@ def copy_config_to_coords(config_file, code_dir):
 def create_run_pbs(index, code_dir):
 	output_file = "SPE.%d.dat" % index
 	pbs_path = os.path.join(code_dir, DEFAULT_PBS_FILENAME)
-	pbs_code = DEFAULT_PBS_CODE % output_file
+	pbs_code = DEFAULT_PBS_CODE % (index, output_file)
 	open(pbs_path, 'wb').write(pbs_code)
 
 def run_pbs(code_dir):
@@ -65,8 +66,13 @@ def run_pbs(code_dir):
 def main():
 	code_path = "/home/inbaloz/Projects/NT_on_surfaces/interlayer_potential_Itai"
 	all_configs = glob("/home/inbaloz/Projects/configs_RI/sliding_paper*atoms*")
+	all_configs.sort(key=lambda x: int(x.split(" ")[-1]))
+	print all_configs
 	for idx, config_file in enumerate(all_configs):
-		send_config_to_pbs(config_file, idx, code_path)
+		if 100 < idx <= 120:
+			time.sleep(5)
+			send_config_to_pbs(config_file, idx, code_path)
 
 if __name__ == '__main__':
 	main()
+
