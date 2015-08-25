@@ -14,7 +14,27 @@ from glob import glob
 PBS_SEND_COMMAND = "qsub"
 DEFAULT_COORDS_FILENAME = "Coords.xyz"
 DEFAULT_PBS_FILENAME = "run.pbs"
-DEFAULT_PBS_CODE = """#PBS -N Zig_CNT.243.0.241.0.Ters.KC.Opt
+
+KC_RI_PBS_CODE = """#PBS -N test
+#PBS -l nodes=1:ppn=8,walltime=2400:00:00
+#PBS -l mem=10000mb
+#PBS -q cores-16
+#PBS -S /bin/tcsh
+#--------------------------------
+echo "Node Name: $HOSTNAME"
+setenv SCRDIR /scratch/${LOGNAME}_%d/$PBS_JOBID
+/bin/mkdir -p $SCRDIR
+cd $SCRDIR
+cp $PBS_O_WORKDIR/BN.x $SCRDIR
+cp $PBS_O_WORKDIR/CH.airebo $SCRDIR
+cp $PBS_O_WORKDIR/run.par $SCRDIR
+cp $PBS_O_WORKDIR/Coords.xyz $SCRDIR
+./BN.x >> Results.dat
+cp -f $SCRDIR/* $PBS_O_WORKDIR
+cp -f $SCRDIR/Single_point_Energy.dat $PBS_O_WORKDIR/%s
+"""
+
+INTERLAYER_POTENTIAL_PBS_CODE = """#PBS -N Zig_CNT.243.0.241.0.Ters.KC.Opt
 #PBS -l nodes=1:ppn=8,walltime=2400:00:00
 #PBS -l mem=7000mb
 #PBS -q cores-8
@@ -35,11 +55,11 @@ rm -rf $SCRDIR
 """
 
 
-def send_config_to_pbs(config_file, index, code_dir):
+def send_config_to_pbs(config_file, index, code_dir, use_kc=False):
 	# copy configuration into Coords.xyz
 	copy_config_to_coords(config_file, code_dir)
 	# create related run.pbs file
-	create_run_pbs(index, code_dir)
+	create_run_pbs(index, code_dir, use_kc=use_kc)
 	# run the pbs file
 	run_pbs(code_dir)
 
@@ -47,10 +67,11 @@ def copy_config_to_coords(config_file, code_dir):
 	dst_path = os.path.join(code_dir, DEFAULT_COORDS_FILENAME)
 	shutil.copy(config_file, dst_path)
 
-def create_run_pbs(index, code_dir):
+def create_run_pbs(index, code_dir, use_kc=False):
 	output_file = "SPE.%d.dat" % index
 	pbs_path = os.path.join(code_dir, DEFAULT_PBS_FILENAME)
-	pbs_code = DEFAULT_PBS_CODE % (index, output_file)
+	code_snippet = KC_RI_PBS_CODE if use_kc else DEFAULT_PBS_CODE
+	pbs_code = code_snippet % (index, output_file)
 	open(pbs_path, 'wb').write(pbs_code)
 
 def run_pbs(code_dir):
@@ -69,9 +90,9 @@ def main():
 	all_configs.sort(key=lambda x: int(x.split(" ")[-1]))
 	print all_configs
 	for idx, config_file in enumerate(all_configs):
-		if 100 < idx <= 120:
+		if 0 < idx <= 20:
 			time.sleep(5)
-			send_config_to_pbs(config_file, idx, code_path)
+			send_config_to_pbs(config_file, idx, code_path, use_kc=True)
 
 if __name__ == '__main__':
 	main()
