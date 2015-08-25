@@ -44,12 +44,12 @@ double CalculateIntersection(Atom atomTube, Atom atomLattice)
 	// Too far:
 	if (d > r1 + r2)
 	{
-		return 0;
+		intersection = 0;
 	}
 	// Very close:
 	else if (d <= ABS(r1 - r2))
 	{
-		return MIN(M_PI * pow(r1,2), M_PI * pow(r2,2));
+		intersection = MIN(M_PI * pow(r1,2), M_PI * pow(r2,2));
 	}
 	
 	// In between:
@@ -60,7 +60,11 @@ double CalculateIntersection(Atom atomTube, Atom atomLattice)
 						pow(r2,2) * acos((pow(d,2) + pow(r2,2) - pow(r1,2)) / (2 * d * r2)) - 
 						// Heron's formula for triangle surface multiplied by 2:
 						0.5 * sqrt( (r1 + r2 - d) * (r1 - r2 + d) * (- r1 + r2 + d) * (r1 + r2 + d) );
-		return intersection;
 	}
+	return WeightIntersection(intersection);
 
+}
+
+double WeightIntersection(double intersection) {
+	return intersection;
 }

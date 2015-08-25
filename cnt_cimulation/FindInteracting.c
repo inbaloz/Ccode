@@ -68,6 +68,10 @@ double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 		}	
 	}
 
-	return RI;
+	return WeightInteracting(RI);
 
+}
+
+double WeightInteracting(double RI) {
+	return RI;
 }

@@ -14,9 +14,9 @@
 #define BN_LATTICE_BL_HOMO	 1.45			// B-N bond length in Angstroms in a lattice in a homojunction
 #define BN_LATTICE_BL_HETERO 1.431			// B-N bond length in Angstroms in a lattice in a heterojunction
 
-#define RCGRAPHENE_HOMO	    (0.5  * GRAPHENE_BL_HOMO)     // Radius of graphene atom (for RI calculations)
+#define RCGRAPHENE_HOMO	    (0.8  * GRAPHENE_BL_HOMO) //(0.5  * GRAPHENE_BL_HOMO)     // Radius of graphene atom (for RI calculations)
 #define RCGRAPHENE_HETERO	(0.5  * GRAPHENE_BL_HETERO)   // Radius of graphene atom (for RI calculations)
-#define RCCNT_HOMO		    (0.5  * CNT_BL_HOMO)		  // Radius of carbon nanotube atom (for RI Calculations)
+#define RCCNT_HOMO		    (0.5  * CNT_BL_HOMO)  //(0.5  * CNT_BL_HOMO)		  // Radius of carbon nanotube atom (for RI Calculations)
 #define RCCNT_HETERO		(0.5  * CNT_BL_HETERO)		  // Radius of carbon nanotube atom (for RI Calculations)
 #define RBTUBE_HOMO		    (0.15 * BN_TUBE_BL_HOMO)      // Radius of Boron atom in BN tube in a homojunction
 #define RBTUBE_HETERO       (0.2  * BN_TUBE_BL_HETERO)    // Radius of Boron atom in BN tube in a heterojunction
@@ -90,7 +90,7 @@ typedef struct
 	aVec Ch;				// Chirality vector
 	int	unitcellN;			// Amount of tube unitcells
 	int motionType;			// Type of motion
-	double shiftAngle;		// The angle between tube axis and y axis (type 1, 3, 4)
+	long double shiftAngle;		// The angle between tube axis and y axis (type 1, 3, 4)
 	double rotateAngle;		// The angle of rotation of the tube around his axis (type 2, 3)
 	double xShift;			// Tube's x axis shift 		(type 1, 2)
 	double yShift;			// Tube's y axis shift 		(type 1, 2)
