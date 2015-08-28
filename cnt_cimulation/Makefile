@@ -11,9 +11,11 @@ C_FILES = \
 	FixGapsInTube.c \
 	EffectiveNum.c \
 	FindInteracting.c \
+	HardSphereIntersection.c \
 	gcd.c \
 	LatticeCreator.c \
 	LoadInPar.c \
+	GaussianIntersection.c \
 	main.c \
 	Move.c \
 	NormRI.c \
@@ -41,12 +43,14 @@ H_FILES = \
 	DuplicateTube.h \
 	CutLastPartOfTube.h \
 	CreateSurface.h \
+	HardSphereIntersection.h \
 	FixGapsInTube.h \
 	EffectiveNum.h \
 	FindInteracting.h \
 	gcd.h \
 	LatticeCreator.h \
 	LoadInPar.h \
+	GaussianIntersection.h \
 	Move.h \
 	NormRI.h \
 	PerfectRotationMotion.h \

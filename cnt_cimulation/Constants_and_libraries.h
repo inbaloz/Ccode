@@ -2,6 +2,9 @@
 #ifndef __CONSTANTS_AND_LIBRARIES__
 #define __CONSTANTS_AND_LIBRARIES__
 
+//*************** Flags **********************
+#define USE_GAUSSIAN_INTERSECTION 1 // 1 if gaussian intersection, 0 for hard sphere.
+
 //*************** Constants ******************
 #define NULL	0
 
@@ -52,6 +55,9 @@
 #define C_type 6
 #define N_type 7
 #define B_type 5
+
+//**************** Gaussian intersection **********
+#define RADIUS_TO_STDEV (2)
 
 //**************** Useful *********************
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
