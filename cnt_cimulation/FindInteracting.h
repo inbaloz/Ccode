@@ -5,4 +5,7 @@
 
 double FindInteracting(Atom atom, double xShift, double yShift, int latticeType);
 
+double WeightInteracting(double RI);
+
+
 #endif

@@ -29,6 +29,7 @@
 #include "SpinningMotion.h"
 #include "TwodDataToFile.h"
 #include "AtomsToFile.h"
+#include "WriteCoordinates.h"
 
 #include "FindInteracting.h"
 
@@ -194,7 +195,7 @@ int main(int argc, char *argv[])
 	tubeUnitN = 4 * ( ((Ch.m) * (Ch.m)) + ((Ch.n) * (Ch.n)) + ((Ch.n) * (Ch.m)) ) / gcd(Ch.n, Ch.m);
 	teta = acos( (2 * Ch.n + Ch.m) / (2 * sqrt( (Ch.n * Ch.n) + (Ch.m * Ch.m) + (Ch.n * Ch.m) ) ) );
 	radius = aVecLength(Ch) / (2 * M_PI);
-	MAX_HEIGHT = radius;
+	MAX_HEIGHT = ILD + radius;
 	length = aVecLength(T) * unitcellN;
 
 //********************** Step 3 - Create the tube and surface ******************************
@@ -246,8 +247,8 @@ int main(int argc, char *argv[])
     //------------------ calculating RImax and RImin --------
 	if (tubeType == 0 && latticeType == 0) // CNT on graphene
 	{
-		RIMax = effTubeNMax * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2));
-		RIMin = effTubeNMin * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2;
+		RIMax = effTubeNMax * WeightIntersection(MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)));
+		RIMin = effTubeNMin * WeightIntersection(MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2);
 	}
 	else if (tubeType == 1 && latticeType ==1) // BN tube on BN lattice
 	{

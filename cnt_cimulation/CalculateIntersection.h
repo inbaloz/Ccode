@@ -5,4 +5,6 @@
 
 double CalculateIntersection(Atom atomTube, Atom atomLattice);
 
+double WeightIntersection(double intersection);
+
 #endif
