@@ -57,7 +57,7 @@
 #define B_type 5
 
 //**************** Gaussian intersection **********
-#define RADIUS_TO_STDEV (2)
+#define RADIUS_TO_STDEV (0.75)
 
 //**************** Useful *********************
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
