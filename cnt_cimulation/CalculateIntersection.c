@@ -1,5 +1,7 @@
 #include "Constants_and_libraries.h"
 #include "CalculateIntersection.h"
+#include "HardSphereIntersection.h"
+#include "GaussianIntersection.h"
 #include <math.h>
 
 // input: two atoms.
@@ -39,28 +41,18 @@ double CalculateIntersection(Atom atomTube, Atom atomLattice)
 		r2 = RNLATTICE;
 	}
 	
-	// --------- calculating the intersection ---------------
+// ------------ calculate intersection -------------
 
-	// Too far:
-	if (d > r1 + r2)
-	{
-		return 0;
-	}
-	// Very close:
-	else if (d <= ABS(r1 - r2))
-	{
-		return MIN(M_PI * pow(r1,2), M_PI * pow(r2,2));
-	}
-	
-	// In between:
-	else
-	{
-		// Sum of to sectors of circles minus the surface of kite created by them:
-		intersection =	pow(r1,2) * acos((pow(d,2) + pow(r1,2) - pow(r2,2)) / (2 * d * r1)) + 
-						pow(r2,2) * acos((pow(d,2) + pow(r2,2) - pow(r1,2)) / (2 * d * r2)) - 
-						// Heron's formula for triangle surface multiplied by 2:
-						0.5 * sqrt( (r1 + r2 - d) * (r1 - r2 + d) * (- r1 + r2 + d) * (r1 + r2 + d) );
-		return intersection;
+	if (USE_GAUSSIAN_INTERSECTION) {
+		intersection = GaussianIntersection(r1, r2, d);
+	} else {
+		intersection = HardSphereIntersection(r1, r2, d);
 	}
 
+	return WeightIntersection(intersection);
+
+}
+
+double WeightIntersection(double intersection) {
+	return intersection;
 }
