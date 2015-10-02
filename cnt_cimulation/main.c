@@ -233,6 +233,10 @@ int main(int argc, char *argv[])
 	surfaceN = CreateSurface(&surfaceLattice, length, radius, latticeType); // Create the surface
 
 //********************** Step 4 - Normalizie RI ********************************
+	
+	// calculate the maximal and minimal effective number of atoms. unless the tube is cut,
+	// they are equal.
+
 	double effTubeNMax, effTubeNMin;
 	effTubeNMax = EffectiveNum(tube, tubeN, ILD, MAX_HEIGHT); 
 	// rotate in half of rotation so we'll get to "the bottom" - 
@@ -287,8 +291,12 @@ int main(int argc, char *argv[])
 //********************** Step 5 - Calculate RI *********************************
 
 	// Initially rotating and spinning the tube as requested (around z axis).
-	Rotate(tube, tubeN, 3, shiftAngle);
-	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius);
+	
+	// 
+
+	Rotate(tube, tubeN, 3, shiftAngle); // rotation around the z axis (spinning)
+	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius); // rotation around the 
+																	 // tube's axis.
 	
 
 	switch(motionType)
