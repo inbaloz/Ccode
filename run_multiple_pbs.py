@@ -70,7 +70,7 @@ def copy_config_to_coords(config_file, code_dir):
 def create_run_pbs(index, code_dir, use_kc=False):
 	output_file = "SPE.%d.dat" % index
 	pbs_path = os.path.join(code_dir, DEFAULT_PBS_FILENAME)
-	code_snippet = KC_RI_PBS_CODE if use_kc else DEFAULT_PBS_CODE
+	code_snippet = KC_RI_PBS_CODE if use_kc else INTERLAYER_POTENTIAL_PBS_CODE
 	pbs_code = code_snippet % (index, output_file)
 	open(pbs_path, 'wb').write(pbs_code)
 
@@ -90,16 +90,30 @@ def wait_for_pbs_to_end(index, code_path, sleep_intervals=5):
 		time.sleep(5)
 	return True
 
+BLOCK_SIZE = 16
+
 def main():
-	code_path = "/home/inbaloz/Projects/NT_on_surfaces/KC_RI_Itai"
-	all_configs = glob("/home/inbaloz/Projects/configs_RI/sliding_paper*atoms*")
+#	code_path = "/home/inbaloz/Projects/NT_on_surfaces/KC_RI_Itai"
+	code_path = "/home/inbaloz/Projects/NT_on_surfaces/interlayer_potential_Itai"
+	#all_configs = glob("/home/inbaloz/Projects/configs_RI/sliding_paper*atoms*")
+	all_configs = glob("/home/inbaloz/Projects/configs_RI_after_modulu_change/sliding_0.190126_degrees*")
 	all_configs.sort(key=lambda x: int(x.split(" ")[-1]))
-	# print all_configs
+	current_block = []
+	print all_configs
 	for idx, config_file in enumerate(all_configs):
-		if 0 <= idx < 20:
-			time.sleep(5)
-			send_config_to_pbs(config_file, idx, code_path, use_kc=True)
-			wait_for_pbs_to_end(idx, code_path)
+		if 11 <= idx: # < 20:
+			if len(current_block) == BLOCK_SIZE:
+				for i in current_block:
+					wait_for_pbs_to_end(i, code_path)
+				current_block = []
+			print 'sending %d / %d' % (idx, len(all_configs))
+			send_config_to_pbs(config_file, idx, code_path, use_kc=False) # True)
+			time.sleep(10)
+			current_block.append(idx)
+
+	for i in current_block:
+		wait_for_pbs_to_end(i, code_path)
+
 
 if __name__ == '__main__':
 	main()
