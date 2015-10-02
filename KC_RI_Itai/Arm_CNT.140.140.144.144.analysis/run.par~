@@ -1,0 +1,17 @@
+0.0       - Initial time in MD calculation (tini - [femtoseconds]).
+100.0     - End time in MD calculation (tend - [femtoseconds]).
+3.2    - Time step in MD calculation (dt -[femtoseconds]).initial setting=0.0005 3.2 for Quenching
+1000 42.9 64.35 34.33  - X periodic Box Length (L.x - [Angstroms]).minimum length is 20 Angstoms 
+1000 42.11 64.47 24.73  - Y periodic Box Length (L.y - [Angstroms]).minimum length is 20 Angstoms
+41.933 1000.0 1000  43.2   - Z periodic Box Length (L.z - [Angstroms]).minimum length is 20 Angstoms 
+0.0       - Temperature in MD calculation (T - [Kelvin]).
+0.2       - Interval for printing energy in MD calculation (tConserve - [femtoseconds]).
+1.0       - Interval for printing trajectory in MD calculation (tTraj - [femtoseconds]).
+50         - Number of steps for printing energy in optimization calculation (NConserve).
+2000         - Number of steps for printing trajectory in optimization calculation (NTraj).	
+1e-12     - Convergence tollerance for the optimization calculation (OptTol).	
+1         - Program Flag (0 - MD, 1 - Single point, 2 - Steepest Descent, 3 - Conjugate gradients 4-Quench).
+4         - Inter-layer Flag (0-molecules (input:atomtype x y z) 1- Curved layered structures (input:atomtype layer x y z) 2- Flat layered structures (input:atomtype layer x y z)) In case 2 the Normal is set to the z (0,0,1) direction whereas in case 1 it is calculated according to an atoms 3 nearest neighbors exluding hydrogen atoms.
+1         - Optimize periodic cell flag (0- dont optimize, 1- optimize cell)
+1         - (# of threads for openmp multithreading,0= use max # of threads available)
+8         - KC_flag(Kolmogorov Crespi interlayer potential flag if=0 off  if=1 on)

@@ -1,0 +1,15 @@
+*bond paramters of Pboc(3,4,5) were changed to the ones in hydrocarbons.
+
+*lambda2 was changed to the one in hydrocarbons.
+
+*f(4,5) was changed to calculate also the atomj f(4,5).
+
+*in equation Eover D_sigma was taken out, as in the article for silicon oxide.
+
+*in E_val F8 was 0.0 if it not a B or N atom, changed to 1.0;
+
+*in Etors there was a -1 which is supposed to be -3.
+
+*In E_over and Eunder I removed the if (delta >/< 0) term.
+
+*in n_lp I multiplied delta_e by -1.
