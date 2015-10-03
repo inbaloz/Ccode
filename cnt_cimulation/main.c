@@ -30,6 +30,8 @@
 #include "TwodDataToFile.h"
 #include "AtomsToFile.h"
 #include "WriteCoordinates.h"
+#include "GaussianIntersection.h"
+#include "Move.h"
 
 #include "FindInteracting.h"
 
@@ -85,6 +87,7 @@
  *
  */
 
+
 // declaring the global parameters of the tube's BL, the lattice's BL and the ILD
 
 double MAX_HEIGHT;
@@ -134,8 +137,8 @@ int main(int argc, char *argv[])
 	Atom* surfaceLattice;	// The lattice that will be used to create the surface.
 	int surfaceN;			// The number of atoms in the lattice.
 	int latticeN;			// The number of atoms in the lattice
-	double RIMin;			// The minimum surface
-	double RIMax;			// The maximum surface
+	double RIMin = 0;			// The minimum surface
+	double RIMax = 0;			// The maximum surface
 	// double effTubeN;		// The effective number of atoms (normalized by hight)	
 	double* RI;				// The registry index data.
 							// type: used to mark what variables are used to
@@ -189,7 +192,6 @@ int main(int argc, char *argv[])
 //---------------- setting the global parameters ----------------------------
 	SetGlobals(tubeType, latticeType);
 
-
 //********************** Step 2 - Calculate tube parameters ********************
 	T = CalculateTranslational(Ch);
 	tubeUnitN = 4 * ( ((Ch.m) * (Ch.m)) + ((Ch.n) * (Ch.n)) + ((Ch.n) * (Ch.m)) ) / gcd(Ch.n, Ch.m);
@@ -237,62 +239,100 @@ int main(int argc, char *argv[])
 	// calculate the maximal and minimal effective number of atoms. unless the tube is cut,
 	// they are equal.
 
-	double effTubeNMax, effTubeNMin;
-	effTubeNMax = EffectiveNum(tube, tubeN, ILD, MAX_HEIGHT); 
-	// rotate in half of rotation so we'll get to "the bottom" - 
-	// where we have the least amount of atoms in the surface (because of percentTruncated).
-	// The rotateShift is 0 at this point (later we'll rotate it as the input requested)
-	RotateShift(tube, tubeN, M_PI, 0, ILD + radius);
-	// calculating the new effective number of atoms and the RIMin
-	effTubeNMin = EffectiveNum(tube, tubeN, ILD, MAX_HEIGHT); 
-	// rotate back in half so we'll get to the initial position
-	RotateShift(tube, tubeN, -M_PI, 0, ILD + radius);
-
-    //------------------ calculating RImax and RImin --------
-	if (tubeType == 0 && latticeType == 0) // CNT on graphene
-	{
-		RIMax = effTubeNMax * WeightIntersection(MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)));
-		RIMin = effTubeNMin * WeightIntersection(MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2);
-	}
-	else if (tubeType == 1 && latticeType ==1) // BN tube on BN lattice
-	{
-		RIMax = effTubeNMax * (0.5 * MIN(M_PI * pow(RNLATTICE,2), M_PI * pow(RNTUBE,2)) +
-							   // N lattice on N tube
-							   0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RBTUBE,2))); 
-							   // B lattice on B tube
-		// calculating the new effective number of atoms and the RIMin
-		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RNTUBE,2)) +
-							   // B lattice on N tube
-						       0.5 * MIN(M_PI * pow(RNLATTICE,2), M_PI * pow(RBTUBE,2))); 
-						       // N lattice on B tube
-	}
-	else if (tubeType == 1 && latticeType == 0) // BN tube on graphene
-	{
-		RIMax = effTubeNMax * (0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RNTUBE,2)) +
-							   // C graphene on N tube
-							   0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RBTUBE,2))); 
-							   // C graphene on B tube
-
-		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RBTUBE,2))); 
-						       // B tube on C graphene
-	}
-	else // CNT on BN lattice
-	{
-		RIMax = effTubeNMax * (0.5 * MIN(M_PI * pow(RNLATTICE,2), M_PI * pow(RCCNT,2)) +
-							   // N lattice on C tube
-							   0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RCCNT,2))); 
+	// double effTubeNMax, effTubeNMin;
+	// effTubeNMax = EffectiveNum(tube, tubeN, ILD, MAX_HEIGHT); 
+	// // rotate in half of rotation so we'll get to "the bottom" - 
+	// // where we have the least amount of atoms in the surface (because of percentTruncated).
+	// // The rotateShift is 0 at this point (later we'll rotate it as the input requested)
+	// RotateShift(tube, tubeN, M_PI, 0, ILD + radius);
+	// // calculating the new effective number of atoms and the RIMin
+	// effTubeNMin = EffectiveNum(tube, tubeN, ILD, MAX_HEIGHT); 
+	// // rotate back in half so we'll get to the initial position
+	// RotateShift(tube, tubeN, -M_PI, 0, ILD + radius);
 
 
-		RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCCNT,2), M_PI * pow(RBLATTICE,2)));
-							   // B lattice on C tube
+    // ----------------------- Assuming the tube is whole.-------------------
+
+    // 1. CNT on graphene
+    int j = 0;
+    double effectiveNum = 0;
+
+    // Positioning the tube at AA
+    Rotate(tube, tubeN, 3, (M_PI/6) - teta); // rotation around the z axis (spinning)
+	//RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius); // rotation around the 
+	 																 // tube's axis.
+    Move(tube, tubeN, CNT_BL_HOMO, 0.0, 0.0);
+
+	// Calculating the RI max															
+	for (j = 0; j < tubeN; j++)
+	{
+		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
+		if (tube[j].z < MAX_HEIGHT)
+		{
+			RIMax = RIMax + effectiveNum * FindInteracting(tube[j], xShift, yShift, latticeType);
+		}
 	}
+
+	// Positioning the tube at AB
+	Move(tube, tubeN, - CNT_BL_HOMO, 0.0, 0.0);
+
+	// Calculating the RI min															
+	for (j = 0; j < tubeN; j++)
+	{
+		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
+		if (tube[j].z < MAX_HEIGHT)
+		{
+			RIMin = RIMin + effectiveNum * FindInteracting(tube[j], xShift, yShift, latticeType);
+		}
+	}
+
+	// Returning the tube to the original location
+	Rotate(tube, tubeN, 3, -((M_PI/6) - teta));
+
+	// if (tubeType == 0 && latticeType == 0) // CNT on graphene
+	// {
+	// 	RIMax = effTubeNMax * WeightIntersection(MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)));
+	// 	RIMin = effTubeNMin * WeightIntersection(MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RCCNT,2)) / 2);
+	// }
+	// else if (tubeType == 1 && latticeType ==1)
+	//  // BN tube on BN lattice
+	// {
+	// 	RIMax = effTubeNMax * (0.5 * MIN(M_PI * pow(RNLATTICE,2), M_PI * pow(RNTUBE,2)) +
+	// 						   // N lattice on N tube
+	// 						   0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RBTUBE,2))); 
+	// 						   // B lattice on B tube
+	// 	// calculating the new effective number of atoms and the RIMin
+	// 	RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RNTUBE,2)) +
+	// 						   // B lattice on N tube
+	// 					       0.5 * MIN(M_PI * pow(RNLATTICE,2), M_PI * pow(RBTUBE,2))); 
+	// 					       // N lattice on B tube
+	// }
+	// else if (tubeType == 1 && latticeType == 0) // BN tube on graphene
+	// {
+	// 	RIMax = effTubeNMax * (0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RNTUBE,2)) +
+	// 						   // C graphene on N tube
+	// 						   0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RBTUBE,2))); 
+	// 						   // C graphene on B tube
+
+	// 	RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCGRAPHENE,2), M_PI * pow(RBTUBE,2))); 
+	// 					       // B tube on C graphene
+	// }
+	// else // CNT on BN lattice
+	// {
+	// 	RIMax = effTubeNMax * (0.5 * MIN(M_PI * pow(RNLATTICE,2), M_PI * pow(RCCNT,2)) +
+	// 						   // N lattice on C tube
+	// 						   0.5 * MIN(M_PI * pow(RBLATTICE,2), M_PI * pow(RCCNT,2))); 
+
+
+	// 	RIMin = effTubeNMin * (0.5 * MIN(M_PI * pow(RCCNT,2), M_PI * pow(RBLATTICE,2)));
+	// 						   // B lattice on C tube
+	// }
 
 	
 //********************** Step 5 - Calculate RI *********************************
 
 	// Initially rotating and spinning the tube as requested (around z axis).
 	
-	// 
 
 	Rotate(tube, tubeN, 3, shiftAngle); // rotation around the z axis (spinning)
 	RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius); // rotation around the 
