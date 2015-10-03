@@ -88,7 +88,6 @@
 // declaring the global parameters of the tube's BL, the lattice's BL and the ILD
 
 double MAX_HEIGHT;
-double RND;
 
 int main(int argc, char *argv[])
 {
@@ -198,7 +197,6 @@ int main(int argc, char *argv[])
 	radius = aVecLength(Ch) / (2 * M_PI);
 	length = aVecLength(T) * unitcellN;
 	MAX_HEIGHT = ILD + radius;
-	RND = MAX_HEIGHT;
 
 //********************** Step 3 - Create the tube and surface ******************************
 
