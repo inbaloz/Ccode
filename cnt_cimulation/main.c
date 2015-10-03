@@ -257,32 +257,27 @@ int main(int argc, char *argv[])
     int j = 0;
     double effectiveNum = 0;
 
-    // Positioning the tube at AA
     Rotate(tube, tubeN, 3, (M_PI/6) - teta); // rotation around the z axis (spinning)
 	//RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius); // rotation around the 
 	 																 // tube's axis.
-    Move(tube, tubeN, CNT_BL_HOMO, 0.0, 0.0);
 
 	// Calculating the RI max															
 	for (j = 0; j < tubeN; j++)
 	{
-		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (MAX_HEIGHT - ILD) ); // find weight of atom
-		if (effectiveNum > NP)
+		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
+		if (tube[j].z < MAX_HEIGHT)
 		{
-			RIMax = RIMax + effectiveNum * FindInteracting(tube[j], xShift, yShift, latticeType);
+			RIMax = RIMax + effectiveNum * FindInteracting(tube[j], 0.0, 0.0, latticeType);
 		}
 	}
-
-	// Positioning the tube at AB
-	Move(tube, tubeN, - CNT_BL_HOMO, 0.0, 0.0);
 
 	// Calculating the RI min															
 	for (j = 0; j < tubeN; j++)
 	{
-		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (MAX_HEIGHT - ILD) ); // find weight of atom
-		if (effectiveNum > NP)
+		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
+		if (tube[j].z < MAX_HEIGHT)
 		{
-			RIMin = RIMin + effectiveNum * FindInteracting(tube[j], xShift, yShift, latticeType);
+			RIMin = RIMin + effectiveNum * FindInteracting(tube[j], CNT_BL_HOMO, 0.0, latticeType);
 		}
 	}
 
