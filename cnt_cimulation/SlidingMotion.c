@@ -4,6 +4,7 @@
 #include "Move.h"
 #include "WriteCoordinates.h"
 #include <math.h>
+#include <stdio.h>
 
 void SlidingMotion(double* RI, double xStep, double yStep, double amountOfSteps,
 				   Atom* tube, int tubeN, Atom* surfaceLattice, int surfaceN, double xShift, 
@@ -21,8 +22,8 @@ void SlidingMotion(double* RI, double xStep, double yStep, double amountOfSteps,
 		RI[i] = 0;
 		for (j = 0; j < tubeN; j++)
 		{
-			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (MAX_HEIGHT - ILD) ); // find weight of atom
-			if (effectiveNum > NP)
+			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
+			if (tube[j].z < MAX_HEIGHT)
 			{
 				currentInteracting = FindInteracting(tube[j], xShift, yShift, latticeType);
 				RI[i] = RI[i] + effectiveNum * currentInteracting;
