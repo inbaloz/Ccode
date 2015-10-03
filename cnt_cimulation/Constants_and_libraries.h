@@ -119,6 +119,7 @@ extern double LATTICE_BL;
 extern double TUBE_BL;
 extern double ILD;
 extern double MAX_HEIGHT;
+extern double RND;
 extern double RCGRAPHENE;
 extern double RCCNT;
 extern double RBTUBE;

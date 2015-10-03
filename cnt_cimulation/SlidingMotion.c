@@ -4,6 +4,7 @@
 #include "Move.h"
 #include "WriteCoordinates.h"
 #include <math.h>
+#include <stdio.h>
 
 void SlidingMotion(double* RI, double xStep, double yStep, double amountOfSteps,
 				   Atom* tube, int tubeN, Atom* surfaceLattice, int surfaceN, double xShift, 
@@ -14,6 +15,8 @@ void SlidingMotion(double* RI, double xStep, double yStep, double amountOfSteps,
 	double effectiveNum;
 	double currentInteracting;
 
+	printf("RND:%lf\nMAX_HEIGHT:%lf\n", RND, MAX_HEIGHT);
+
 	// The sliding (Move) is in the end because when i = 0 we want
 	// the start x,y, so we don't want to slide by the regular step.
 	for (i = 0; i < amountOfSteps; i++)
@@ -21,8 +24,8 @@ void SlidingMotion(double* RI, double xStep, double yStep, double amountOfSteps,
 		RI[i] = 0;
 		for (j = 0; j < tubeN; j++)
 		{
-			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (MAX_HEIGHT - ILD) ); // find weight of atom
-			if (effectiveNum > NP)
+			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
+			if (tube[i].z < MAX_HEIGHT)
 			{
 				currentInteracting = FindInteracting(tube[j], xShift, yShift, latticeType);
 				RI[i] = RI[i] + effectiveNum * currentInteracting;
