@@ -29,7 +29,7 @@ void SpinningMotion(double* RI, double spinningStep, double amountOfSteps,
 		for (j = 0; j < tubeN; j++)
 		{
 			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) );
-			if (tube[i].z < MAX_HEIGHT)
+			if (tube[j].z < MAX_HEIGHT)
 			{
 				RI[i] = RI[i] + effectiveNum * FindInteracting(tube[j], xShift, yShift, latticeType);
 			}

@@ -15,8 +15,6 @@ void SlidingMotion(double* RI, double xStep, double yStep, double amountOfSteps,
 	double effectiveNum;
 	double currentInteracting;
 
-	printf("RND:%lf\nMAX_HEIGHT:%lf\n", RND, MAX_HEIGHT);
-
 	// The sliding (Move) is in the end because when i = 0 we want
 	// the start x,y, so we don't want to slide by the regular step.
 	for (i = 0; i < amountOfSteps; i++)
@@ -25,7 +23,7 @@ void SlidingMotion(double* RI, double xStep, double yStep, double amountOfSteps,
 		for (j = 0; j < tubeN; j++)
 		{
 			effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
-			if (tube[i].z < MAX_HEIGHT)
+			if (tube[j].z < MAX_HEIGHT)
 			{
 				currentInteracting = FindInteracting(tube[j], xShift, yShift, latticeType);
 				RI[i] = RI[i] + effectiveNum * currentInteracting;

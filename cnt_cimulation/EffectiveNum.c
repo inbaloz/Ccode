@@ -17,8 +17,8 @@ double EffectiveNum(Atom* array, int arrayN, double minHight, double maxHight)
 	{
 		// temp - current atom in tube, normalized by its hight:
 		// the lowest will get 1, the closest to maxHight will get 0.
-		temp = exp( EXPNORM * (minHight - array[i].z) / (maxHight - minHight) );
-		if	(temp > NP)
+		temp = exp( EXPNORM * (minHight - array[i].z) / (RND - minHight) );
+		if	(array[i].z < maxHight)
 		{
 			result = result + temp;
 		}
