@@ -48,8 +48,8 @@ int LatticeCreator(Atom** lattice, double xMin, double yMin, double xMax, double
 		firstAtom = C_type;
 		secondAtom = C_type;
 	} else if (tubeType == 1) { // if tube is BN
-		firstAtom = N_type;
-		secondAtom = B_type;
+		firstAtom = B_type;
+		secondAtom = N_type;
 	}
 
 	for (i = minLayer; i <= maxLayer; i++)
