@@ -22,7 +22,7 @@ void WriteCoordinates(Atom *tube, int tubeN, Atom *surfaceLattice,
 	sprintf(tubeFile, "%s - atoms %d", prefix, step);
 	AtomsToFile(tube, tubeN, tubeFile, 0.0, 0.0, 0.0, append);
 	append = 1;
-	AtomsToFile(surfaceLattice, surfaceN, tubeFile, xMod, yMod, 0.0, append);
+	AtomsToFile(surfaceLattice, surfaceN, tubeFile, -xMod, -yMod, 0.0, append);
 }
 
 
