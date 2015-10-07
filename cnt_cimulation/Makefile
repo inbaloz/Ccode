@@ -2,6 +2,7 @@ C_FILES = \
 	ArrayToFile.c \
 	aVecLength.c \
 	CalculateIntersection.c \
+	CalculateRIMaxRIMin.c\
 	CalculateTranslational.c \
 	CLI.c \
 	CutUnitcell.c \

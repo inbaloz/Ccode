@@ -8,6 +8,7 @@
 #include "ArrayToFile.h"
 #include "aVecLength.h"
 #include "CalculateIntersection.h"
+#include "CalculateRIMaxRIMin.h"
 #include "CalculateTranslational.h"
 #include "CLI.h"
 #include "CreateSurface.h"
@@ -137,8 +138,8 @@ int main(int argc, char *argv[])
 	Atom* surfaceLattice;	// The lattice that will be used to create the surface.
 	int surfaceN;			// The number of atoms in the lattice.
 	int latticeN;			// The number of atoms in the lattice
-	double RIMin = 0;			// The minimum surface
-	double RIMax = 0;			// The maximum surface
+	double RIMin;		// The minimum surface
+	double RIMax;		// The maximum surface
 	// double effTubeN;		// The effective number of atoms (normalized by hight)	
 	double* RI;				// The registry index data.
 							// type: used to mark what variables are used to
@@ -199,6 +200,7 @@ int main(int argc, char *argv[])
 	radius = aVecLength(Ch) / (2 * M_PI);
 	length = aVecLength(T) * unitcellN;
 	MAX_HEIGHT = ILD + radius;
+	printf("radius: %lf\n", radius);
 
 //********************** Step 3 - Create the tube and surface ******************************
 
@@ -252,93 +254,7 @@ int main(int argc, char *argv[])
 
 
     // ***************** Assuming the tube is whole.*********************
-
-	// ----Placing the tube for easy reach of desired configurations -----
-
-    Rotate(tube, tubeN, 3, (M_PI/6) - teta); // rotation around the z axis (spinning)
-	//RotateShift(tube, tubeN, rotateAngle, shiftAngle, ILD + radius); // rotation around the 
-	 																 // tube's axis.
-
-    // Setting the correct x and yshifts of desired configurations:
-    // 1. CNT on graphene: maximal at AA, minimal at AB.
-    // 2. BNNT on h-BN	 : maximal at AA. minimal at AA' (All N on B)
-    // 3. Heterojunctions: maximal at AA (all eclipsed), minimal when half
-    // 	  of the C atoms are atop B atoms and the rest are above hexagon centers
-    //	  of the h-BN lattice.
-
-    double xShiftRIMax = 0.0;
-    double xShiftRIMin = 0.0;
-    double yShiftRIMax = 0.0;
-    double yShiftRIMin = 0.0;
-    double rotationAngleRIMin = 0.0;
-
-    if (tubeType == 0 && latticeType == 0) {      // 1. CNT on graphene
-		//RIMax
-		xShiftRIMax = 0.0;
-		yShiftRIMax = 0.0;
-
-		//RIMin
-    	xShiftRIMin = CNT_BL_HOMO;
-    	yShiftRIMin = 0.0;
-	}
-	else if (tubeType == 1 && latticeType == 1) { // 2. BN tube on BN lattice
-		//RIMax
-		xShiftRIMax = 0.0;
-		yShiftRIMax = 0.0;
-
-		//RIMin
-    	rotationAngleRIMin = M_PI/3;
-    	xShiftRIMin = -BN_LATTICE_BL_HOMO;
-    	yShiftRIMin = 0.0;
-	}
-	else if (tubeType == 0 && latticeType ==1) {  // 3. Heterojunctions: CNT on BN lattice
-		//RIMax
-		xShiftRIMax = 0.0;
-		yShiftRIMax = 0.0;
-
-		//RIMin
-    	xShiftRIMin = BN_LATTICE_BL_HETERO;
-    	yShiftRIMin = 0.0;
-	}
-	else {  									  // 3. Heterojunctions: BNNT on graphene
-		xShiftRIMax = 0.0;
-		yShiftRIMax = 0.0;
-
-    	xShiftRIMin = -BN_LATTICE_BL_HETERO;
-    	yShiftRIMin = 0.0;
-	}									  
-	
-
-    // ----------------- Calculating RIMax and RIMin ----------------------
-    int j = 0;
-    double effectiveNum = 0;
-
-	// Calculating the RI max
-	for (j = 0; j < tubeN; j++)
-	{
-		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
-		if (tube[j].z < MAX_HEIGHT)
-		{
-			RIMax = RIMax + effectiveNum * FindInteracting(tube[j], xShiftRIMax, yShiftRIMax,
-														   latticeType);
-		}
-	}
-
-	// Calculating the RI min
-	Rotate(tube, tubeN, 3, rotationAngleRIMin);
-	for (j = 0; j < tubeN; j++)
-	{
-		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
-		if (tube[j].z < MAX_HEIGHT)
-		{
-			RIMin = RIMin + effectiveNum * FindInteracting(tube[j], xShiftRIMin, yShiftRIMin,
-														   latticeType);
-		}
-	}
-
-	// Returning the tube to the original location
-	Rotate(tube, tubeN, 3, -((M_PI/6) - teta) + rotationAngleRIMin);
-
+	CalculateRIMaxRIMin(&RIMax, &RIMin, surfaceLattice, surfaceN, tube, tubeN, teta, tubeType, latticeType);
 	
 //********************** Step 5 - Calculate RI *********************************
 
