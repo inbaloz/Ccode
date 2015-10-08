@@ -2,6 +2,7 @@
 #include "Rotate.h"
 #include "FindInteracting.h"
 #include "WriteCoordinates.h"
+#include "Move.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -9,7 +10,7 @@
 
 void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int surfaceN, 
 						 Atom* tube, int tubeN, double teta,
-					 	 int tubeType, int latticeType) 
+					 	 int tubeType, int latticeType, double rotSpinStart) 
 {
 	double xShiftRIMax = 0.0;
     double xShiftRIMin = 0.0;
@@ -19,7 +20,6 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
     int	   j = 0;
     double effectiveNum = 0;
     double radius_tube_0, radius_tube_1, radius_surface_0, radius_surface_1;
-    double corrugation;
 
     *RIMax = 0.0;
     *RIMin = 0.0;
@@ -106,16 +106,19 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
 		if (tube[j].z < MAX_HEIGHT)
 		{
-			*RIMax = *RIMax + effectiveNum * FindInteracting(tube[j], xShiftRIMax, yShiftRIMax,
+			*RIMax = *RIMax + effectiveNum * FindInteracting(tube[j], xShiftRIMax, xShiftRIMax,
 														   latticeType);
-
 		}
 	}
+
+	WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 
+						  xShiftRIMax,xShiftRIMax, -2, "normalizedRIMax");
 
 	// Calculating the RI min
 	Rotate(tube, tubeN, 3, rotationAngleRIMin);
 	WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 
 						  xShiftRIMin,yShiftRIMin, -1, "normalizedRIMin");
+
 	for (j = 0; j < tubeN; j++)
 	{
 		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom

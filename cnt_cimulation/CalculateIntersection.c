@@ -48,11 +48,5 @@ double CalculateIntersection(Atom atomTube, Atom atomLattice)
 	} else {
 		intersection = HardSphereIntersection(r1, r2, d);
 	}
-
-	return WeightIntersection(intersection);
-
-}
-
-double WeightIntersection(double intersection) {
 	return intersection;
 }
