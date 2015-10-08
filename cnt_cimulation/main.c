@@ -312,6 +312,10 @@ int main(int argc, char *argv[])
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		Rad2Deg(rotSpinValues, amountOfSteps);
 		TwodDataToFile(rotSpinValues, RI, amountOfSteps, strcat(prefix, " - Spinning RI Data"));
+		printf("RIMin: %lf\n", RIMin);
+		printf("RIMax: %lf\n", RIMax);
+		printf("RI in 100th step: %lf\n", ((RI[100]) * (RIMax + RIMin)) + RIMin);
+		printf("RI in 300th step: %lf\n", ((RI[300]) * (RIMax + RIMin)) + RIMin);
 		free(rotSpinValues);
 		free(RI);
 		break;

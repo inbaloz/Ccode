@@ -23,8 +23,8 @@ double GaussianIntersection(double radius1, double radius2, double distance)
 
 	// --------- calcualte intersection -----------
 
-	intersection = p1 * p2 * k12 * pow((M_PI / delta12), 1);
+		intersection = p1 * p2 * k12 * pow((M_PI / delta12), 1);
 
-	return intersection;
-
+	}
+	
 }

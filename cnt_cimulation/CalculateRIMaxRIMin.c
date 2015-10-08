@@ -100,10 +100,6 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 
     // ------------ (III) Calculating RIMax and RIMin ----------------------
 
-	// Setting the Radii
-
-	
-
 	// Calculating the RI max
 	for (j = 0; j < tubeN; j++)
 	{

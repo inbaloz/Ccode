@@ -58,7 +58,8 @@
 #define B_type 5
 
 //**************** Gaussian intersection **********
-#define RADIUS_TO_STDEV (0.75) // sigma = radius * RADIUS_TO_STDEV
+#define RADIUS_TO_STDEV (0.75)		// sigma = radius * RADIUS_TO_STDEV
+								   	// The larger it is, the wider the gaussian.
 
 //**************** Useful *********************
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
@@ -127,7 +128,7 @@ extern double RBLATTICE;
 extern double RNTUBE;
 extern double RNLATTICE;
 
-extern Atom ZONE_1[];
+extern Atom ZONE_1[SIZE_ZONE_1];
 extern Atom ZONE_2[SIZE_ZONE_2];
 extern Atom ZONE_3[SIZE_ZONE_3];
 extern Atom ZONE_4[SIZE_ZONE_4];
