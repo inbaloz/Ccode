@@ -46,6 +46,7 @@
 
 #define NP		(0.01)			// Negligible part;
 #define EXPNORM	(4.605170186)	// ABS(log(0.01)) (log = ln)
+#define RND		(ILD + 1.53)
 
 #define WRITE	"w"				// Writing type
 #define PT		0				// Print title for data files? (1 = yes, 0 = no)
