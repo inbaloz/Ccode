@@ -17,7 +17,7 @@ print g
 l = [open(i,'rb').read() for i in g]
 
 #ris = [re.findall("E_KC= (.*) RI= (.*)", i.splitlines()[1])[0] for i in l]
-ris = [re.findall("ToT_Energy= (.*)", i.splitlines()[0])[0] for i in l]
+ris = [re.findall("Energy_per_atom= (.*)", i.splitlines()[0])[0] for i in l]
 print "\n".join(ris)
 
 
