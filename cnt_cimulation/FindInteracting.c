@@ -10,16 +10,6 @@
 // Output: the additiont to RI as a result of the interaction between
 // the input atom and the lattice atoms.
 
-// number of atoms in the different zones.
-
-Atom ZONE_1[SIZE_ZONE_1];
-Atom ZONE_2[SIZE_ZONE_2];
-Atom ZONE_3[SIZE_ZONE_3];
-Atom ZONE_4[SIZE_ZONE_4];
-Atom ZONE_5[SIZE_ZONE_5];
-
-Atom GaussianZone[SIZE_GAUSSIAN_ZONE];
-
 double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 {
 	int i;
@@ -46,15 +36,8 @@ double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 		for (i=0; i<SIZE_GAUSSIAN_ZONE; i++) {
 			RI += CalculateIntersection(atomMod, GaussianZone[i]);
 		}
-	}
-	else {
+	} else {
 		RI = FindInteractingHardSPhere(atomMod, xMod, yMod);
 	}
-
-	return WeightInteracting(RI);
-
-}
-
-double WeightInteracting(double RI) {
 	return RI;
 }
