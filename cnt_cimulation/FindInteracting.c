@@ -11,12 +11,6 @@
 
 // number of atoms in the different zones.
 
-Atom ZONE_1[SIZE_ZONE_1];
-Atom ZONE_2[SIZE_ZONE_2];
-Atom ZONE_3[SIZE_ZONE_3];
-Atom ZONE_4[SIZE_ZONE_4];
-Atom ZONE_5[SIZE_ZONE_5];
-
 double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 {
 	int i;
@@ -67,11 +61,6 @@ double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 			RI += CalculateIntersection(atomMod, ZONE_5[i]);
 		}	
 	}
-
-	return WeightInteracting(RI);
-
-}
-
-double WeightInteracting(double RI) {
+	
 	return RI;
 }
