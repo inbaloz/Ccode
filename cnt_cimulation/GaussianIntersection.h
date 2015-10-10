@@ -3,6 +3,7 @@
 
 #include "Constants_and_libraries.h"
 
-double GaussianIntersection(double radius1, double radius2, double distance);
+double GaussianIntersection(double radius1, double radius2, double distance,
+							double radiusToSTDEV1, double radiusToSTDEV2);
 
 #endif
