@@ -9,6 +9,8 @@
 double CalculateIntersection(Atom atomTube, Atom atomLattice)
 {
 	double r1, r2; // r1 is atomTube's radius and r2 is atomLattice's radius.
+	double radiusToSTDEV1, radiusToSTDEV2;
+
 	double intersection;
 
 	// ----- calculating the distance between the atoms ----
@@ -18,33 +20,39 @@ double CalculateIntersection(Atom atomTube, Atom atomLattice)
 	if (atomTube.type == C_type)
 	{
 		r1 = RCCNT;
+		radiusToSTDEV1 = RADIUS_TO_STDEV_C;
 	}
 	else if (atomTube.type == B_type)
 	{
 		r1 = RBTUBE;
+		radiusToSTDEV1 = RADIUS_TO_STDEV_B;
 	}
 	else
 	{
 		r1 = RNTUBE;
+		radiusToSTDEV1 = RADIUS_TO_STDEV_N;
 	}
 
 	if (atomLattice.type == C_type)
 	{
 		r2 = RCGRAPHENE;
+		radiusToSTDEV2 = RADIUS_TO_STDEV_C;
 	}
 	else if (atomLattice.type == B_type)
 	{
 		r2 = RBLATTICE;
+		radiusToSTDEV2 = RADIUS_TO_STDEV_B;
 	}
 	else // atomeLattice.type == 'N'
 	{
 		r2 = RNLATTICE;
+		radiusToSTDEV2 = RADIUS_TO_STDEV_N;
 	}
 	
 // ------------ calculate intersection -------------
 
 	if (USE_GAUSSIAN_INTERSECTION) {
-		intersection = GaussianIntersection(r1, r2, d);
+		intersection = GaussianIntersection(r1, r2, d, radiusToSTDEV1, radiusToSTDEV2);
 	} else {
 		intersection = HardSphereIntersection(r1, r2, d);
 	}

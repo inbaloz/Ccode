@@ -58,8 +58,10 @@
 #define B_type 5
 
 //**************** Gaussian intersection **********
-#define RADIUS_TO_STDEV (0.75)		// sigma = radius * RADIUS_TO_STDEV
+#define RADIUS_TO_STDEV_C (0.75)	// sigma = radius * RADIUS_TO_STDEV
 								   	// The larger it is, the wider the gaussian.
+#define RADIUS_TO_STDEV_N (0.75)
+#define RADIUS_TO_STDEV_B (2.15)		
 
 //**************** Useful *********************
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
