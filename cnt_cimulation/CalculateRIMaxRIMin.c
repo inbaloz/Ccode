@@ -19,7 +19,6 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
     int	   j = 0;
     double effectiveNum = 0;
     double radius_tube_0, radius_tube_1, radius_surface_0, radius_surface_1;
-    double corrugation;
 
     *RIMax = 0.0;
     *RIMin = 0.0;
@@ -112,6 +111,8 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 		}
 	}
 
+	WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 
+						  xShiftRIMax,yShiftRIMax, -2, "normalizedRIMax");
 	// Calculating the RI min
 	Rotate(tube, tubeN, 3, rotationAngleRIMin);
 	WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 
@@ -126,6 +127,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 		}
 	}
 	printf("RIMin:%lf\n", *RIMin);
+	printf("RIMax:%lf\n", *RIMax);
 	// ------- (IV) Returning the tube to the original location -----------------
 	Rotate(tube, tubeN, 3, -((M_PI/6) - teta) + rotationAngleRIMin);
 }
