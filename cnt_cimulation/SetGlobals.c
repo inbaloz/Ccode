@@ -13,6 +13,12 @@ double RBLATTICE;
 double RNTUBE;
 double RNLATTICE;
 
+Atom ZONE_1[SIZE_ZONE_1];
+Atom ZONE_2[SIZE_ZONE_2];
+Atom ZONE_3[SIZE_ZONE_3];
+Atom ZONE_4[SIZE_ZONE_4];
+Atom ZONE_5[SIZE_ZONE_5];
+
 void SetGlobals(int tubeType, int latticeType)
 {
 	if (tubeType == 0 & latticeType == 0) {
