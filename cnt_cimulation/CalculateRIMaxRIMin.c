@@ -19,7 +19,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
     int	   j = 0;
     double effectiveNum = 0;
     double radius_tube_0, radius_tube_1, radius_surface_0, radius_surface_1;
-    double halfDifference;
+    double halfDifferenceHeight, halfDifferenceWidth;
 
     *RIMax = 0.0;
     *RIMin = 0.0;
@@ -68,7 +68,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
     	radius_surface_0 = RBLATTICE_HOMO;
     	radius_surface_1 = RNLATTICE_HOMO;
 	}
-	else if (tubeType == 0 && latticeType ==1) {  // 3. Heterojunctions: CNT on BN lattice
+	else if (tubeType == 0 && latticeType == 1) {  // 3. Heterojunctions: CNT on BN lattice
 		if (CNT_BL_HETERO == BN_LATTICE_BL_HETERO) {
 			//RIMax
 			xShiftRIMax = 0.0;
@@ -78,15 +78,16 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
     		xShiftRIMin = -BN_LATTICE_BL_HETERO;
     		yShiftRIMin = 0.0;
 		} else {
-			halfDifference = MAX(CNT_BL_HETERO, BN_LATTICE_BL_HETERO)/2;
+			halfDifferenceWidth  = fabs(LATTICE_HIGHT - TUBE_HIGHT)/2;
+			halfDifferenceHeight = fabs(LATTICE_WIDTH - TUBE_WIDTH)/2;
+			printf("The abs of -3.145 is: %lf\n", fabs(-3.145));
 			//RIMax
-			xShiftRIMax = -halfDifference;
-			yShiftRIMax = 0.0;
+			xShiftRIMax = halfDifferenceWidth;
+			yShiftRIMax = halfDifferenceHeight;
 
 			//RIMin
-    		xShiftRIMin = - (BN_LATTICE_BL_HETERO + halfDifference);
-    		yShiftRIMin = 0.0;
-			
+    		xShiftRIMin = halfDifferenceWidth - LATTICE_WIDTH;
+    		yShiftRIMin = halfDifferenceHeight;
 		}
 
     	// radii
@@ -98,17 +99,24 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 	else {  									  // 3. Heterojunctions: BNNT on graphene
 		
 		if (BN_TUBE_BL_HETERO == GRAPHENE_BL_HETERO) {
-			
-			halfDifference = MAX(BN_TUBE_BL_HETERO, GRAPHENE_BL_HETERO)/2;
 			//RIMax
-			xShiftRIMax = halfDifference;
+			xShiftRIMax = 0.0;
 			yShiftRIMax = 0.0;
 
 			//RIMin
-    		xShiftRIMin = (BN_LATTICE_BL_HETERO + halfDifference);
+    		xShiftRIMin = BN_LATTICE_BL_HETERO;
     		yShiftRIMin = 0.0;
 		} else {
+			halfDifferenceWidth  = fabs(LATTICE_HIGHT - TUBE_HIGHT)/2;
+			halfDifferenceHeight = fabs(LATTICE_WIDTH - TUBE_WIDTH)/2;
+			printf("The abs of -3.145 is: %lf\n", fabs(-3.145));
+			//RIMax
+			xShiftRIMax = -halfDifferenceWidth;
+			yShiftRIMax = -halfDifferenceHeight;
 
+			//RIMin
+    		xShiftRIMin = -halfDifferenceWidth + LATTICE_WIDTH;
+    		yShiftRIMin = -halfDifferenceHeight;
 		}
 
     	// radii
@@ -146,7 +154,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 														   latticeType);
 		}
 	}
-	printf("RIMax:%lf\n", *RIMin);
+	printf("RIMax:%lf\n", *RIMax);
 	printf("RIMin:%lf\n", *RIMin);
 	// ------- (IV) Returning the tube to the original location -----------------
 	Rotate(tube, tubeN, 3, -((M_PI/6) - teta) + rotationAngleRIMin);
