@@ -19,7 +19,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
     int	   j = 0;
     double effectiveNum = 0;
     double radius_tube_0, radius_tube_1, radius_surface_0, radius_surface_1;
-    double corrugation;
+    double halfDifference;
 
     *RIMax = 0.0;
     *RIMin = 0.0;
@@ -69,13 +69,25 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
     	radius_surface_1 = RNLATTICE_HOMO;
 	}
 	else if (tubeType == 0 && latticeType ==1) {  // 3. Heterojunctions: CNT on BN lattice
-		//RIMax
-		xShiftRIMax = 0.0;
-		yShiftRIMax = 0.0;
+		if (CNT_BL_HETERO == BN_LATTICE_BL_HETERO) {
+			//RIMax
+			xShiftRIMax = 0.0;
+			yShiftRIMax = 0.0;
 
-		//RIMin
-    	xShiftRIMin = -BN_LATTICE_BL_HETERO;
-    	yShiftRIMin = 0.0;
+			//RIMin
+    		xShiftRIMin = -BN_LATTICE_BL_HETERO;
+    		yShiftRIMin = 0.0;
+		} else {
+			halfDifference = MAX(CNT_BL_HETERO, BN_LATTICE_BL_HETERO)/2;
+			//RIMax
+			xShiftRIMax = -halfDifference;
+			yShiftRIMax = 0.0;
+
+			//RIMin
+    		xShiftRIMin = - (BN_LATTICE_BL_HETERO + halfDifference);
+    		yShiftRIMin = 0.0;
+			
+		}
 
     	// radii
     	radius_tube_0 = RCCNT_HETERO;
@@ -84,11 +96,20 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
     	radius_surface_1 = RNTUBE_HETERO;
 	}
 	else {  									  // 3. Heterojunctions: BNNT on graphene
-		xShiftRIMax = 0.0;
-		yShiftRIMax = 0.0;
+		
+		if (BN_TUBE_BL_HETERO == GRAPHENE_BL_HETERO) {
+			
+			halfDifference = MAX(BN_TUBE_BL_HETERO, GRAPHENE_BL_HETERO)/2;
+			//RIMax
+			xShiftRIMax = halfDifference;
+			yShiftRIMax = 0.0;
 
-    	xShiftRIMin = BN_LATTICE_BL_HETERO;
-    	yShiftRIMin = 0.0;
+			//RIMin
+    		xShiftRIMin = (BN_LATTICE_BL_HETERO + halfDifference);
+    		yShiftRIMin = 0.0;
+		} else {
+
+		}
 
     	// radii
     	radius_tube_0 = RBTUBE_HETERO;
