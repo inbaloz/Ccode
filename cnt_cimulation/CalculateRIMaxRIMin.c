@@ -86,7 +86,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 			yShiftRIMax = halfDifferenceHeight;
 
 			//RIMin
-    		xShiftRIMin = halfDifferenceWidth - LATTICE_WIDTH;
+    		xShiftRIMin = halfDifferenceWidth + LATTICE_WIDTH;
     		yShiftRIMin = halfDifferenceHeight;
 		}
 
