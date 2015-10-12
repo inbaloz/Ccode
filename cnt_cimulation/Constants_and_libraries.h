@@ -3,19 +3,19 @@
 #define __CONSTANTS_AND_LIBRARIES__
 
 //*************** Flags **********************
-#define USE_GAUSSIAN_INTERSECTION 0 // 1 if gaussian intersection, 0 for hard sphere.
+#define USE_GAUSSIAN_INTERSECTION 1 // 1 if gaussian intersection, 0 for hard sphere.
 
 //*************** Constants ******************
 #define NULL	0
 
 #define CNT_BL_HOMO		     1.42	        // C-C bond length in Angstroms	for a CNT in a homojunction
-#define CNT_BL_HETERO	     1.42	        // C-C bond length in Angstroms	for a CNT in a heterojunction
+#define CNT_BL_HETERO	     1.42//1.431	        // C-C bond length in Angstroms	for a CNT in a heterojunction
 #define GRAPHENE_BL_HOMO     1.42			// C-C bond length in Angstroms	for graphene in a homojunction
-#define GRAPHENE_BL_HETERO   1.42			// C-C bond length in Angstroms	for graphene in a heterojunction	
+#define GRAPHENE_BL_HETERO   1.42//1.431			// C-C bond length in Angstroms	for graphene in a heterojunction	
 #define BN_TUBE_BL_HOMO	     1.45			// B-N bond length in Angstroms in a tube in a homojunction
-#define BN_TUBE_BL_HETERO    1.45			// B-N bond length in Angstroms in a tube in a heterojunction
+#define BN_TUBE_BL_HETERO    1.45//1.431			// B-N bond length in Angstroms in a tube in a heterojunction
 #define BN_LATTICE_BL_HOMO	 1.45			// B-N bond length in Angstroms in a lattice in a homojunction
-#define BN_LATTICE_BL_HETERO 1.45			// B-N bond length in Angstroms in a lattice in a heterojunction
+#define BN_LATTICE_BL_HETERO 1.45//1.431			// B-N bond length in Angstroms in a lattice in a heterojunction
 
 #define RCGRAPHENE_HOMO	    (0.5  * GRAPHENE_BL_HOMO)     // Radius of graphene atom (for RI calculations)
 #define RCGRAPHENE_HETERO	(0.5  * GRAPHENE_BL_HETERO)   // Radius of graphene atom (for RI calculations)
@@ -58,7 +58,7 @@
 #define B_type 5
 
 //**************** Gaussian intersection **********
-#define RADIUS_TO_STDEV (0.3)	// sigma = radius * RADIUS_TO_STDEV								   	// The larger it is, the wider the gaussian.
+#define RADIUS_TO_STDEV (0.85)	// sigma = radius * RADIUS_TO_STDEV								   	// The larger it is, the wider the gaussian.
 //#define RADIUS_TO_STDEV_C (0.75)
 //#define RADIUS_TO_STDEV_N (0.75)
 //#define RADIUS_TO_STDEV_B (2.15)

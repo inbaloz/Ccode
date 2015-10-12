@@ -69,11 +69,11 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 	}
 	else if (tubeType == 0 && latticeType ==1) {  // 3. Heterojunctions: CNT on BN lattice
 		//RIMax
-		xShiftRIMax = 0.0;
+		xShiftRIMax = MAX(CNT_BL_HETERO, BN_LATTICE_BL_HETERO) / 2;
 		yShiftRIMax = 0.0;
 
 		//RIMin
-    	xShiftRIMin = -BN_LATTICE_BL_HETERO;
+    	xShiftRIMin = -BN_LATTICE_BL_HETERO - MAX(CNT_BL_HETERO, BN_LATTICE_BL_HETERO) / 2;
     	yShiftRIMin = 0.0;
 
     	// radii
