@@ -141,6 +141,9 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 		}
 	}
 
+	
+	WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 
+						  xShiftRIMax,yShiftRIMax, -2, "normalizedRIMax");
 	// Calculating the RI min
 	Rotate(tube, tubeN, 3, rotationAngleRIMin);
 	WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 

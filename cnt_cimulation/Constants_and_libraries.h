@@ -3,7 +3,7 @@
 #define __CONSTANTS_AND_LIBRARIES__
 
 //*************** Flags **********************
-#define USE_GAUSSIAN_INTERSECTION 0 // 1 if gaussian intersection, 0 for hard sphere.
+#define USE_GAUSSIAN_INTERSECTION 1 // 1 if gaussian intersection, 0 for hard sphere.
 
 //*************** Constants ******************
 #define NULL	0
