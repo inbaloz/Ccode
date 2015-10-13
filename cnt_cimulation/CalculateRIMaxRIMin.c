@@ -10,7 +10,8 @@
 void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int surfaceN, 
 						 Atom* tube, int tubeN, double teta,
 					 	 int tubeType, int latticeType) 
-{
+{	
+	double tempLatticeBL;
 	double xShiftRIMax = 0.0;
     double xShiftRIMin = 0.0;
     double yShiftRIMax = 0.0;
@@ -18,11 +19,12 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
     double rotationAngleRIMin = 0.0;
     int	   j = 0;
     double effectiveNum = 0;
-    double radius_tube_0, radius_tube_1, radius_surface_0, radius_surface_1;
 
     *RIMax = 0.0;
     *RIMin = 0.0;
 
+    tempLatticeBL = LATTICE_BL;
+    LATTICE_BL = TUBE_BL;
 
 	// ---- (I) Placing the tube for easy reach of desired configurations ---------
 
@@ -44,12 +46,6 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 		//RIMin
     	xShiftRIMin = CNT_BL_HOMO;
     	yShiftRIMin = 0.0;
-
-    	// radii
-    	radius_tube_0 = RCCNT_HOMO;
-    	radius_tube_1 = RCCNT_HOMO;
-    	radius_surface_0 = RCGRAPHENE_HOMO;
-    	radius_surface_1 = RCGRAPHENE_HOMO;
 	}
 	else if (tubeType == 1 && latticeType == 1) { // 2. BN tube on BN lattice
 		//RIMax
@@ -58,16 +54,11 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 
 		//RIMin
     	rotationAngleRIMin = M_PI/3;
-    	xShiftRIMin = -BN_LATTICE_BL_HOMO;
+    	xShiftRIMin = 0.0;//BN_LATTICE_BL_HOMO;
     	yShiftRIMin = 0.0;
-
-    	// radii
-    	radius_tube_0 = RBTUBE_HOMO;
-    	radius_tube_1 = RNTUBE_HOMO;
-    	radius_surface_0 = RBLATTICE_HOMO;
-    	radius_surface_1 = RNLATTICE_HOMO;
+    	printf("BL lattice: %lf\n, BL tube: %lf\n", LATTICE_BL, TUBE_BL);
 	}
-	else if (tubeType == 0 && latticeType ==1) {  // 3. Heterojunctions: CNT on BN lattice
+	else if (tubeType == 0 && latticeType ==1) {  // 3. Heterojunctions: CNT on BN lattice	
 		//RIMax
 		xShiftRIMax = 0.0;
 		yShiftRIMax = 0.0;
@@ -75,12 +66,6 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 		//RIMin
     	xShiftRIMin = -BN_LATTICE_BL_HETERO;
     	yShiftRIMin = 0.0;
-
-    	// radii
-    	radius_tube_0 = RCCNT_HETERO;
-    	radius_tube_1 = RCCNT_HETERO;
-    	radius_surface_0 = RBTUBE_HETERO;
-    	radius_surface_1 = RNTUBE_HETERO;
 	}
 	else {  									  // 3. Heterojunctions: BNNT on graphene
 		xShiftRIMax = 0.0;
@@ -88,12 +73,6 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 
     	xShiftRIMin = BN_LATTICE_BL_HETERO;
     	yShiftRIMin = 0.0;
-
-    	// radii
-    	radius_tube_0 = RBTUBE_HETERO;
-    	radius_tube_1 = RNTUBE_HETERO;
-    	radius_surface_0 = RBLATTICE_HETERO;
-    	radius_surface_1 = RNLATTICE_HETERO;
 	}									  
 	
 
@@ -130,4 +109,6 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 	printf("RIMax:%lf\n", *RIMax);
 	// ------- (IV) Returning the tube to the original location -----------------
 	Rotate(tube, tubeN, 3, -((M_PI/6) - teta) + rotationAngleRIMin);
+
+	LATTICE_BL = tempLatticeBL;
 }
