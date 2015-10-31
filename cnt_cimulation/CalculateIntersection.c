@@ -57,10 +57,10 @@ double CalculateIntersection(Atom atomTube, Atom atomLattice)
 		intersection = HardSphereIntersection(r1, r2, d);
 	}
 
-	return WeightIntersection(intersection);
+	if ((atomTube.type == N_type && atomLattice.type == B_type) || (atomTube.type == B_type && atomLattice.type == N_type))
+	{
+		intersection = - intersection;
+	}
 
-}
-
-double WeightIntersection(double intersection) {
 	return intersection;
 }
