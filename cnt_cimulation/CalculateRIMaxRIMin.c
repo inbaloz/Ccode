@@ -54,7 +54,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 
 		//RIMin
     	rotationAngleRIMin = M_PI/3;
-    	xShiftRIMin = 0.0;//BN_LATTICE_BL_HOMO;
+    	xShiftRIMin = BN_LATTICE_BL_HOMO;
     	yShiftRIMin = 0.0;
     	printf("BL lattice: %lf\n, BL tube: %lf\n", LATTICE_BL, TUBE_BL);
 	}
