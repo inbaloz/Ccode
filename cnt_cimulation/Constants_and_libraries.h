@@ -3,7 +3,7 @@
 #define __CONSTANTS_AND_LIBRARIES__
 
 //*************** Flags **********************
-#define USE_GAUSSIAN_INTERSECTION 0 // 1 if gaussian intersection, 0 for hard sphere.
+#define USE_GAUSSIAN_INTERSECTION 1 // 1 if gaussian intersection, 0 for hard sphere.
 
 //*************** Constants ******************
 #define NULL	0
@@ -58,7 +58,7 @@
 #define B_type 5
 
 //**************** Gaussian intersection **********
-#define RADIUS_TO_STDEV (0.3)	// sigma = radius * RADIUS_TO_STDEV								   	// The larger it is, the wider the gaussian.
+#define RADIUS_TO_STDEV (0.75)	// sigma = radius * RADIUS_TO_STDEV								   	// The larger it is, the wider the gaussian.
 //#define RADIUS_TO_STDEV_C (0.75)
 //#define RADIUS_TO_STDEV_N (0.75)
 //#define RADIUS_TO_STDEV_B (2.15)
