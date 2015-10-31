@@ -9,7 +9,7 @@ void WriteCoordinates(Atom *tube, int tubeN, Atom *surfaceLattice,
 					  int surfaceN, double xShift, double yShift, int step,
 					  char *prefix)
 {
-	if ((step > 0) && step != 100 && step != 300){
+	if ((step > 0) && step != 42 && step != 300){
 		return;
 	}
 
