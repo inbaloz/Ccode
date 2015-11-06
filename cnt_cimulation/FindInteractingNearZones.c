@@ -1,5 +1,5 @@
 #include "Constants_and_libraries.h"
-#include "FindInteractingHardSPhere.h"
+#include "FindInteractingNearZones.h"
 #include "CalculateIntersection.h"
 #include <math.h>
 #include <stdio.h>
@@ -17,7 +17,7 @@ Atom ZONE_3[SIZE_ZONE_3];
 Atom ZONE_4[SIZE_ZONE_4];
 Atom ZONE_5[SIZE_ZONE_5];
 
-double FindInteractingHardSPhere(Atom atomMod, double xMod, double yMod)
+double FindInteractingNearZones(Atom atomMod, double xMod, double yMod)
 {
 	int i;
 	double RI = 0;

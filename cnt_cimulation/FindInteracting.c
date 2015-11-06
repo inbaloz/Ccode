@@ -1,7 +1,8 @@
 #include "Constants_and_libraries.h"
 #include "FindInteracting.h"
 #include "CalculateIntersection.h"
-#include "FindInteractingHardSPhere.h"
+#include "FindInteractingNearZones.h"
+#include "FindInteractingGlobalZone.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -39,7 +40,7 @@ double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 			RI += CalculateIntersection(atomMod, GaussianZone[i]);
 		}
 	} else {
-		RI = FindInteractingHardSPhere(atomMod, xMod, yMod);
+		RI = FindInteractingNearZones(atomMod, xMod, yMod);
 	}
 	
 	return RI;

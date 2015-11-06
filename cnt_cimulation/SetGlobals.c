@@ -1,7 +1,7 @@
 #include <math.h>
 #include "Constants_and_libraries.h"
 #include "SetGlobals.h"
-#include "CreateGaussianZone.h"
+#include "CreateGlobalZone.h"
 #include "CreateHardSphereZone.h"
 #include <stdio.h>
 
@@ -57,8 +57,8 @@ void SetGlobals(int tubeType, int latticeType)
 		LATTICE_BL = BN_LATTICE_BL_HOMO;
 	}
 
-	if (USE_GAUSSIAN_INTERSECTION) {
-		CreateGaussianZone(latticeType);
+	if (USE_GLOBAL_ZONE) {
+		CreateGlobalZone(latticeType);
 	}
 	else {
 		CreateHardSphereZone(latticeType);

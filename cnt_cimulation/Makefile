@@ -9,9 +9,10 @@ C_FILES = \
 	DuplicateTube.c \
 	CutLastPartOfTube.c \
 	CreateSurface.c \
-	CreateGaussianZone.c\
+	CreateGlobalZone.c\
 	FixGapsInTube.c \
-	FindInteractingHardSPhere.c \
+	FindInteractingNearZones.c \
+	FindInteractingGlobalZone.c \
 	EffectiveNum.c \
 	FindInteracting.c \
 	HardSphereIntersection.c \
@@ -47,10 +48,11 @@ H_FILES = \
 	DuplicateTube.h \
 	CutLastPartOfTube.h \
 	CreateSurface.h \
-	CreateGaussianZone.h\
+	CreateGlobalZone.h\
 	HardSphereIntersection.h \
 	FixGapsInTube.h \
-	FindInteractingHardSPhere.h \
+	FindInteractingNearZones.h \
+	FindInteractingGlobalZone.h \
 	EffectiveNum.h \
 	FindInteracting.h \
 	gcd.h \
