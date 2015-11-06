@@ -2,6 +2,7 @@
 #include "Rotate.h"
 #include "FindInteracting.h"
 #include "WriteCoordinates.h"
+#include "Move.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -84,9 +85,8 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
 		if (tube[j].z < MAX_HEIGHT)
 		{
-			*RIMax = *RIMax + effectiveNum * FindInteracting(tube[j], xShiftRIMax, yShiftRIMax,
+			*RIMax = *RIMax + effectiveNum * FindInteracting(tube[j], xShiftRIMax, xShiftRIMax,
 														   latticeType);
-
 		}
 	}
 
@@ -96,6 +96,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 	Rotate(tube, tubeN, 3, rotationAngleRIMin);
 	WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 
 						  xShiftRIMin,yShiftRIMin, -1, "normalizedRIMin");
+
 	for (j = 0; j < tubeN; j++)
 	{
 		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom

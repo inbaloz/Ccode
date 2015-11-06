@@ -4,6 +4,7 @@
 
 //*************** Flags **********************
 #define USE_GAUSSIAN_INTERSECTION 1 // 1 if gaussian intersection, 0 for hard sphere.
+#define USE_GLOBAL_ZONE 1
 
 //*************** Constants ******************
 #define NULL	0
@@ -77,6 +78,8 @@
 #define	SIZE_ZONE_4   14
 #define	SIZE_ZONE_5   17
 
+#define	SIZE_GLOBAL_ZONE   130
+
 //*************** interlayer potential (Itai and Oded's code) *********
 #define INTERACTION_BUFFER 18 // in [Angstrom]. Note: The maximal interaction distance 
 							 //in Itai's code is 16 [A], I added a buffer.
@@ -138,6 +141,8 @@ extern Atom ZONE_2[SIZE_ZONE_2];
 extern Atom ZONE_3[SIZE_ZONE_3];
 extern Atom ZONE_4[SIZE_ZONE_4];
 extern Atom ZONE_5[SIZE_ZONE_5];
+
+extern Atom GlobalZone[SIZE_GLOBAL_ZONE];
 
 
 #endif /* On the #ifndef __CONSTANTS_AND_LIBRARIES__ */

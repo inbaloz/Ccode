@@ -1,5 +1,4 @@
 #include "Constants_and_libraries.h"
-#include "SetGlobals.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,7 +6,6 @@
 #include <malloc.h>
 #include "ArrayToFile.h"
 #include "aVecLength.h"
-#include "CalculateIntersection.h"
 #include "CalculateRIMaxRIMin.h"
 #include "CalculateTranslational.h"
 #include "CLI.h"
@@ -28,6 +26,7 @@
 #include "SaveInPar.h"
 #include "SlidingMotion.h"
 #include "SpinningMotion.h"
+#include "SetGlobals.h"
 #include "TwodDataToFile.h"
 #include "AtomsToFile.h"
 #include "WriteCoordinates.h"
@@ -191,7 +190,9 @@ int main(int argc, char *argv[])
 	latticeType      = input.latticeType;
 
 //---------------- setting the global parameters ----------------------------
+
 	SetGlobals(tubeType, latticeType);
+	
 
 //********************** Step 2 - Calculate tube parameters ********************
 	T = CalculateTranslational(Ch);
@@ -254,7 +255,8 @@ int main(int argc, char *argv[])
 
 
     // ***************** Assuming the tube is whole.*********************
-	CalculateRIMaxRIMin(&RIMax, &RIMin, surfaceLattice, surfaceN, tube, tubeN, teta, tubeType, latticeType);
+	CalculateRIMaxRIMin(&RIMax, &RIMin, surfaceLattice, surfaceN, tube, 
+						tubeN, teta, tubeType, latticeType, rotSpinStart);
 	
 //********************** Step 5 - Calculate RI *********************************
 

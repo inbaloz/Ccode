@@ -9,7 +9,10 @@ C_FILES = \
 	DuplicateTube.c \
 	CutLastPartOfTube.c \
 	CreateSurface.c \
+	CreateGlobalZone.c\
 	FixGapsInTube.c \
+	FindInteractingNearZones.c \
+	FindInteractingGlobalZone.c \
 	EffectiveNum.c \
 	FindInteracting.c \
 	HardSphereIntersection.c \
@@ -26,12 +29,15 @@ C_FILES = \
 	RotateShift.c \
 	RotationMotion.c \
 	SaveInPar.c \
+	SetGlobals.c \
+	SetAmplitude.c \
+	SetRadius.c \
 	SlidingMotion.c \
 	SpinningMotion.c \
 	TwodDataToFile.c \
 	AtomsToFile.c \
-	SetGlobals.c \
-	WriteCoordinates.c \
+	CreateHardSphereZone.c \
+	WriteCoordinates.c 
 
 H_FILES = \
 	ArrayToFile.h \
@@ -44,8 +50,11 @@ H_FILES = \
 	DuplicateTube.h \
 	CutLastPartOfTube.h \
 	CreateSurface.h \
+	CreateGlobalZone.h\
 	HardSphereIntersection.h \
 	FixGapsInTube.h \
+	FindInteractingNearZones.h \
+	FindInteractingGlobalZone.h \
 	EffectiveNum.h \
 	FindInteracting.h \
 	gcd.h \
@@ -60,12 +69,15 @@ H_FILES = \
 	RotateShift.h \
 	RotationMotion.h \
 	SaveInPar.h \
+	SetGlobals.h \
+	SetAmplitude.h \
+	SetRadius.h \
 	SlidingMotion.h \
 	SpinningMotion.h \
 	TwodDataToFile.h \
 	AtomsToFile.h \
-	SetGlobals.h \
-	WriteCoordinates.h \
+	CreateHardSphereZone.h \
+	WriteCoordinates.h 
 
 O_FILES = ${C_FILES:.c=.o} # Take the .c files and replace with .o
 

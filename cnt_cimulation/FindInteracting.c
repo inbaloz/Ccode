@@ -1,6 +1,8 @@
 #include "Constants_and_libraries.h"
 #include "FindInteracting.h"
 #include "CalculateIntersection.h"
+#include "FindInteractingNearZones.h"
+#include "FindInteractingGlobalZone.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -13,9 +15,6 @@
 
 double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 {
-	int i;
-
-
 	// Ensuring we have a non-negative value in the right range:
 	double xMod = remainder(atom.x + xShift, LATTICE_HORIZD);
 	double yMod = remainder(atom.y + yShift, LATTICE_HIGHT);
@@ -34,32 +33,10 @@ double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 
 // ------------------------- calculating intersection ----------------------------------
 
-	if (xMod >= 0 && xMod < LATTICE_BL) {
-		for (i=0; i<SIZE_ZONE_1; i++) {
-			RI += CalculateIntersection(atomMod, ZONE_1[i]);
-		}	
-	}
-	else if	(xMod >= LATTICE_BL && xMod < (1.5 * LATTICE_BL)) {
-		for (i=0; i<SIZE_ZONE_2; i++) {
-			RI += CalculateIntersection(atomMod, ZONE_2[i]);
-		}	
-	}
-	else if (xMod >= (1.5 * LATTICE_BL) && xMod < (2.5 * LATTICE_BL)) {
-		if (yMod >= (0.5 * LATTICE_HIGHT)) {
-			for (i=0; i<SIZE_ZONE_3; i++) {
-				RI += CalculateIntersection(atomMod, ZONE_3[i]);
-			}
-		}
-		else {
-			for (i=0; i<SIZE_ZONE_4; i++) {
-				RI += CalculateIntersection(atomMod, ZONE_4[i]);
-			}
-		}	
-	}
-	else { // xMod >= (2.5 * LATTICE_BL) && xMod < (3 * LATTICE_BL)
-		for (i=0; i<SIZE_ZONE_5; i++) {
-			RI += CalculateIntersection(atomMod, ZONE_5[i]);
-		}	
+	if (USE_GLOBAL_ZONE) {
+		RI = FindInteractingGlobalZone(atomMod);
+	} else {
+		RI = FindInteractingNearZones(atomMod, xMod, yMod);
 	}
 	
 	return RI;

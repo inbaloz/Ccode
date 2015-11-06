@@ -8,6 +8,6 @@
 
 void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int surfaceN, 
 						 Atom* tube, int tubeN, double teta,
-					 	 int tubeType, int latticeType);
+					 	 int tubeType, int latticeType, double CalculateRIMaxRIMin);
 
 #endif
