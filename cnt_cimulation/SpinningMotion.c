@@ -37,6 +37,6 @@ void SpinningMotion(double* RI, double spinningStep, double amountOfSteps,
 		
 		WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 
 						  xShift, yShift, i, prefix);
-		Rotate(tube, tubeN, 3, spinningStep);
+		Rotate(tube, tubeN, 3, -spinningStep);
 	}
 }

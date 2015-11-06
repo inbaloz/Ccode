@@ -10,6 +10,8 @@
 // Output: the additiont to RI as a result of the interaction between
 // the input atom and the lattice atoms.
 
+// number of atoms in the different zones.
+
 double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 {
 	int i;
@@ -39,5 +41,6 @@ double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 	} else {
 		RI = FindInteractingHardSPhere(atomMod, xMod, yMod);
 	}
+	
 	return RI;
 }
