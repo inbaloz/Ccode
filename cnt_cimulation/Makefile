@@ -30,6 +30,8 @@ C_FILES = \
 	RotationMotion.c \
 	SaveInPar.c \
 	SetGlobals.c \
+	SetAmplitude.c \
+	SetRadius.c \
 	SlidingMotion.c \
 	SpinningMotion.c \
 	TwodDataToFile.c \
@@ -68,6 +70,8 @@ H_FILES = \
 	RotationMotion.h \
 	SaveInPar.h \
 	SetGlobals.h \
+	SetAmplitude.h \
+	SetRadius.h \
 	SlidingMotion.h \
 	SpinningMotion.h \
 	TwodDataToFile.h \
