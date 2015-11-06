@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
 		// Printing the RI and rotSpinValues to a file:
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		Rad2Deg(rotSpinValues, amountOfSteps);
-		TwodDataToFile(rotSpinValues, RI, amountOfSteps, strcat(prefix, " - Rotation RI Data"));
+		TwodDataToFile(rotSpinValues, RI, amountOfSteps, strcat(prefix, "-Rotation_RI"));
 		free(rotSpinValues);
 		free(RI);
 		break;
@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
 		// Printing the RI and rotSpinValues to a file:
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		Rad2Deg(rotSpinValues, amountOfSteps);
-		TwodDataToFile(rotSpinValues, RI, amountOfSteps, strcat(prefix, " - Spinning RI Data"));
+		TwodDataToFile(rotSpinValues, RI, amountOfSteps, strcat(prefix, "-Spinning_RI"));
 		printf("RIMin: %lf\n", RIMin);
 		printf("RIMax: %lf\n", RIMax);
 		printf("RI in 100th step: %lf\n", ((RI[100]) * (RIMax + RIMin)) + RIMin);
@@ -339,7 +339,7 @@ int main(int argc, char *argv[])
 
 		// Printing the RI and x-yValues to a file:
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
-		TwodDataToFile(slideValues, RI, amountOfSteps, strcat(prefix, " - Sliding RI Data"));
+		TwodDataToFile(slideValues, RI, amountOfSteps, strcat(prefix, "-Sliding_RI"));
 		free(slideValues);
 		free(RI);
 		break;
@@ -378,7 +378,7 @@ int main(int argc, char *argv[])
 		
 		// Printing the RI and x-yValues to a file:
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
-		TwodDataToFile(slideValues, RI, amountOfSteps, strcat(prefix, " - Perfect Rotation RI Data"));
+		TwodDataToFile(slideValues, RI, amountOfSteps, strcat(prefix, "-Perfect_Rotation_RI"));
 		free(slideValues);
 		free(RI);
 		break;
