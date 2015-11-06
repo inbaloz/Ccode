@@ -15,8 +15,6 @@
 
 double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 {
-	int i;
-
 	// Ensuring we have a non-negative value in the right range:
 	double xMod = remainder(atom.x + xShift, LATTICE_HORIZD);
 	double yMod = remainder(atom.y + yShift, LATTICE_HIGHT);
@@ -35,10 +33,8 @@ double FindInteracting(Atom atom, double xShift, double yShift, int latticeType)
 
 // ------------------------- calculating intersection ----------------------------------
 
-	if (USE_GAUSSIAN_INTERSECTION) {
-		for (i=0; i<SIZE_GAUSSIAN_ZONE; i++) {
-			RI += CalculateIntersection(atomMod, GaussianZone[i]);
-		}
+	if (USE_GLOBAL_ZONE) {
+		RI = FindInteractingGlobalZone(atomMod);
 	} else {
 		RI = FindInteractingNearZones(atomMod, xMod, yMod);
 	}
