@@ -2,6 +2,8 @@
 #include "CalculateIntersection.h"
 #include "HardSphereIntersection.h"
 #include "GaussianIntersection.h"
+#include "SetRadius.h"
+#include "SetAmplitude.h"
 #include <math.h>
 
 // input: two atoms.
@@ -17,37 +19,11 @@ double CalculateIntersection(Atom atomTube, Atom atomLattice)
 	double d = sqrt(pow(atomTube.x - atomLattice.x, 2) + pow(atomTube.y - atomLattice.y, 2));
 	
 	// ----- setting the radii according to the atoms types (C/B/N) -----
-	if (atomTube.type == C_type)
-	{
-		r1 = RCCNT;
-		gaussianAmplitude1 = GAUSSIAN_AMPLITUDE_C;
-	}
-	else if (atomTube.type == B_type)
-	{
-		r1 = RBTUBE;
-		gaussianAmplitude1 = GAUSSIAN_AMPLITUDE_B;
-	}
-	else
-	{
-		r1 = RNTUBE;
-		gaussianAmplitude1 = GAUSSIAN_AMPLITUDE_N;
-	}
 
-	if (atomLattice.type == C_type)
-	{
-		r2 = RCGRAPHENE;
-		gaussianAmplitude2 = GAUSSIAN_AMPLITUDE_C;
-	}
-	else if (atomLattice.type == B_type)
-	{
-		r2 = RBLATTICE;
-		gaussianAmplitude2 = GAUSSIAN_AMPLITUDE_B;
-	}
-	else // atomeLattice.type == 'N'
-	{
-		r2 = RNLATTICE;
-		gaussianAmplitude2 = GAUSSIAN_AMPLITUDE_N;
-	}
+	r1 = SetRadius(atomTube.type);
+	r2 = SetRadius(atomLattice.type);
+	gaussianAmplitude1 = SetAmplitude(atomTube.type);
+	gaussianAmplitude2 = SetAmplitude(atomLattice.type);
 	
 // ------------ calculate intersection -------------
 
