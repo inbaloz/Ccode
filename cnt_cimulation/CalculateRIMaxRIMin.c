@@ -109,7 +109,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 	printf("RIMin:%lf\n", *RIMin);
 	printf("RIMax:%lf\n", *RIMax);
 	// ------- (IV) Returning the tube to the original location -----------------
-	Rotate(tube, tubeN, 3, -((M_PI/6) - teta) + rotationAngleRIMin);
+	Rotate(tube, tubeN, 3, -((M_PI/6) - teta + rotationAngleRIMin));
 
 	LATTICE_BL = tempLatticeBL;
 }
