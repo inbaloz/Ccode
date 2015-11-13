@@ -9,9 +9,9 @@ void WriteCoordinates(Atom *tube, int tubeN, Atom *surfaceLattice,
 					  int surfaceN, double xShift, double yShift, int step,
 					  char *prefix)
 {
-	//if (step > 0){ // && step != 42 && step != 300)
-	//	return;
-	//}
+	if (step > 0){ // && step != 42 && step != 300)
+		return;
+	}
 
 	int append = 0; // 0 - write, 1 - append
 	char tubeFile[105];		// Tube file name
