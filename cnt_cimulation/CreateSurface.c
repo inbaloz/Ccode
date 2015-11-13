@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-// This function creates the surface and then moves it so the tube 
+// This function creates the surface and then moves it so the tube is always placed at the center.
 
 int CreateSurface(Atom** surfaceLattice, double length, double radius, int latticeType) 
 
