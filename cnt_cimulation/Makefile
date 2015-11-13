@@ -35,6 +35,7 @@ C_FILES = \
 	SlidingMotion.c \
 	SpinningMotion.c \
 	TwodDataToFile.c \
+	TubeCreator.c \
 	AtomsToFile.c \
 	CreateHardSphereZone.c \
 	WriteCoordinates.c 
@@ -75,6 +76,7 @@ H_FILES = \
 	SlidingMotion.h \
 	SpinningMotion.h \
 	TwodDataToFile.h \
+	TubeCreator.h \
 	AtomsToFile.h \
 	CreateHardSphereZone.h \
 	WriteCoordinates.h 
