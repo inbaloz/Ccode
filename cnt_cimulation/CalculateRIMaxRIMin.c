@@ -2,30 +2,38 @@
 #include "Rotate.h"
 #include "FindInteracting.h"
 #include "WriteCoordinates.h"
-#include "Move.h"
+#include "CreateSurface.h"
+#include "TubeCreator.h"
 #include <math.h>
 #include <stdio.h>
+#include <malloc.h>
 
 // This function creates the surface and then moves it so the tube 
 
 void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int surfaceN, 
 						 Atom* tube, int tubeN, double teta,
-					 	 int tubeType, int latticeType) 
-{	
-	double tempLatticeBL;
-	double xShiftRIMax = 0.0;
-    double xShiftRIMin = 0.0;
-    double yShiftRIMax = 0.0;
-    double yShiftRIMin = 0.0;
+					 	 int tubeType, int latticeType, aVec T, aVec Ch, int tubeUnitN,
+						 int unitcellN, double radius) 
+{
+	Atom** normaliztionTube; 		// a pointer to the right tube we're going to use for the normaliztion
+									// either the hetro tube or the given tube (regular tube)
+	int* normalizationTubeN;
+	Atom** normalizationSurfaceLattice;	// The lattice that will be used to create the surface.
+	int* normalizationSurfaceN;
+
+	Atom* heteroTube;			// tube specificaly for hetero junctions
+	int heteroTubeN;
+	Atom* heteroSurfaceLattice;	// The lattice that will be used to create the surface.
+	int heteroSurfaceN;
+
+	double tempLatticeBL, tempTubeBL;
+	double xShiftRIMax = 0.0, xShiftRIMin = 0.0, yShiftRIMax = 0.0, yShiftRIMin = 0.0;
     double rotationAngleRIMin = 0.0;
     int	   j = 0;
     double effectiveNum = 0;
 
     *RIMax = 0.0;
     *RIMin = 0.0;
-
-    tempLatticeBL = LATTICE_BL;
-    LATTICE_BL = TUBE_BL;
 
 	// ---- (I) Placing the tube for easy reach of desired configurations ---------
 
@@ -47,8 +55,8 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 		//RIMin
     	xShiftRIMin = CNT_BL_HOMO;
     	yShiftRIMin = 0.0;
-	}
-	else if (tubeType == 1 && latticeType == 1) { // 2. BN tube on BN lattice
+
+	} else if (tubeType == 1 && latticeType == 1) { // 2. BN tube on BN lattice
 		//RIMax
 		xShiftRIMax = 0.0;
 		yShiftRIMax = 0.0;
@@ -58,58 +66,90 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
     	xShiftRIMin = BN_LATTICE_BL_HOMO;
     	yShiftRIMin = 0.0;
     	printf("BL lattice: %lf\n, BL tube: %lf\n", LATTICE_BL, TUBE_BL);
-	}
-	else if (tubeType == 0 && latticeType ==1) {  // 3. Heterojunctions: CNT on BN lattice	
+
+	} else if (tubeType == 0 && latticeType ==1) {  // 3. Heterojunctions: CNT on BN lattice	
 		//RIMax
 		xShiftRIMax = 0.0;
 		yShiftRIMax = 0.0;
 
 		//RIMin
-    	xShiftRIMin = -BN_LATTICE_BL_HETERO;
+    	xShiftRIMin = -BL_NORMALIZATION_HETERO;
     	yShiftRIMin = 0.0;
-	}
-	else {  									  // 3. Heterojunctions: BNNT on graphene
+
+	} else {  									  // 3. Heterojunctions: BNNT on graphene
 		xShiftRIMax = 0.0;
 		yShiftRIMax = 0.0;
 
-    	xShiftRIMin = BN_LATTICE_BL_HETERO;
+    	xShiftRIMin = BL_NORMALIZATION_HETERO;
     	yShiftRIMin = 0.0;
 	}									  
 	
+	// creating the hetero tube:
+
+	if (tubeType != latticeType)
+	{	
+		tempLatticeBL = LATTICE_BL;
+		tempTubeBL = TUBE_BL;
+		TUBE_BL    = BL_NORMALIZATION_HETERO;
+		LATTICE_BL = BL_NORMALIZATION_HETERO;
+		heteroTubeN = TubeCreator(T, Ch, teta, tubeType, tubeUnitN, unitcellN, &heteroTube);
+		heteroSurfaceN = CreateSurface(&heteroSurfaceLattice, T, unitcellN, radius, latticeType);
+
+		normaliztionTube = &heteroTube;
+		normalizationTubeN = &heteroTubeN;
+		normalizationSurfaceLattice = &heteroSurfaceLattice;
+		normalizationSurfaceN = &heteroSurfaceN;
+	} else {
+		normaliztionTube = &tube;
+		normalizationTubeN = &tubeN;
+		normalizationSurfaceLattice = &surfaceLattice;
+		normalizationSurfaceN = &surfaceN;
+	}
+	
+
 
     // ------------ (III) Calculating RIMax and RIMin ----------------------
 
 	// Calculating the RI max
-	for (j = 0; j < tubeN; j++)
+	for (j = 0; j < *normalizationTubeN; j++)
 	{
-		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
-		if (tube[j].z < MAX_HEIGHT)
+		effectiveNum = exp( EXPNORM * (ILD - (*normaliztionTube)[j].z) / (RND - ILD) ); // find weight of atom
+		if ((*normaliztionTube)[j].z < MAX_HEIGHT)
 		{
-			*RIMax = *RIMax + effectiveNum * FindInteracting(tube[j], xShiftRIMax, xShiftRIMax,
+			*RIMax = *RIMax + effectiveNum * FindInteracting((*normaliztionTube)[j], xShiftRIMax, xShiftRIMax,
 														   latticeType);
 		}
 	}
 
-	WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 
-						  xShiftRIMax,yShiftRIMax, -2, "normalizedRIMax");
+	WriteCoordinates((*normaliztionTube), *normalizationTubeN, *normalizationSurfaceLattice, *normalizationSurfaceN, 
+					 xShiftRIMax, yShiftRIMax, -2, "normalizedRIMax");
 	// Calculating the RI min
-	Rotate(tube, tubeN, 3, rotationAngleRIMin);
-	WriteCoordinates(tube, tubeN, surfaceLattice, surfaceN, 
-						  xShiftRIMin,yShiftRIMin, -1, "normalizedRIMin");
+	Rotate((*normaliztionTube), *normalizationTubeN, 3, rotationAngleRIMin);
 
-	for (j = 0; j < tubeN; j++)
+
+	for (j = 0; j < *normalizationTubeN; j++)
 	{
-		effectiveNum = exp( EXPNORM * (ILD - tube[j].z) / (RND - ILD) ); // find weight of atom
-		if (tube[j].z < MAX_HEIGHT)
+		effectiveNum = exp( EXPNORM * (ILD - (*normaliztionTube)[j].z) / (RND - ILD) ); // find weight of atom
+		if ((*normaliztionTube)[j].z < MAX_HEIGHT)
 		{
-			*RIMin = *RIMin + effectiveNum * FindInteracting(tube[j], xShiftRIMin, yShiftRIMin,
+			*RIMin = *RIMin + effectiveNum * FindInteracting((*normaliztionTube)[j], xShiftRIMin, yShiftRIMin,
 														   latticeType);
 		}
 	}
+	WriteCoordinates((*normaliztionTube), *normalizationTubeN, *normalizationSurfaceLattice, *normalizationSurfaceN, 
+					 xShiftRIMin, yShiftRIMin, -1, "normalizedRIMin");
+
 	printf("RIMin:%lf\n", *RIMin);
 	printf("RIMax:%lf\n", *RIMax);
-	// ------- (IV) Returning the tube to the original location -----------------
-	Rotate(tube, tubeN, 3, -((M_PI/6) - teta + rotationAngleRIMin));
 
-	LATTICE_BL = tempLatticeBL;
+	// ------- (IV) Returning the tube to the original location -----------------
+	Rotate((*normaliztionTube), *normalizationTubeN, 3, -((M_PI/6) - teta + rotationAngleRIMin));
+
+	if (tubeType != latticeType) {	
+		TUBE_BL    = tempTubeBL;
+		LATTICE_BL = tempLatticeBL;
+		free(heteroTube);
+		free(heteroSurfaceLattice);
+	} 
+
 }
