@@ -143,6 +143,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 
 	printf("RIMin:%lf\n", *RIMin);
 	printf("RIMax:%lf\n", *RIMax);
+	printf("number of atoms in tube:%d\n", tubeN);
 	printf("totalEffectiveNum:%lf\n", totalEffectiveNum);
 
 	// ------- (IV) Returning the tube to the original location -----------------
@@ -155,4 +156,6 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 		free(heteroSurfaceLattice);
 	} 
 
+	printf("Tube_BL:%lf\n", TUBE_BL);
+	printf("Lattice_BL:%lf\n", LATTICE_BL);
 }
