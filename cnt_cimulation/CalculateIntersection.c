@@ -5,6 +5,7 @@
 #include "SetRadius.h"
 #include "SetAmplitude.h"
 #include <math.h>
+#include <stdio.h>
 
 // input: two atoms.
 // output: the intersection of the two circles around them on x-y plane.
