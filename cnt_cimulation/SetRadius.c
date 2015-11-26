@@ -8,14 +8,16 @@ double SetRadius(int atomType)
 
 	if (atomType == C_type)
 	{
-		return RCCNT;
+		return RCGRAPHENE_HOMO;
 	}
 	else if (atomType == B_type)
 	{
-		return RBTUBE;
+		return RBLATTICE_HETERO;
 	}
 	else
 	{
-		return RNTUBE;
+		return RNLATTICE_HETERO;
 	}
+
+
 }
