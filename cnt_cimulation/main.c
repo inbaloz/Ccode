@@ -306,6 +306,7 @@ int main(int argc, char *argv[])
 				      surfaceN, xStart, yStart, latticeType, prefix);
 
 		// Printing the RI and x-yValues to a file:
+		printf("RI of fist step:%lf\n", RI[0]);
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		TwodDataToFile(slideValues, RI, amountOfSteps, strcat(prefix, "-Sliding_RI"));
 		free(slideValues);
