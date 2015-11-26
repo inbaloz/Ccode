@@ -36,9 +36,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
     *RIMax = 0.0;
     *RIMin = 0.0;
 
-	// ---- (I) Placing the tube for easy reach of desired configurations ---------
-
-    Rotate(tube, tubeN, 3, (M_PI/6) - teta); // rotation around the z axis (spinning)
+	
 
     // ---- (II) Setting the correct x and yshifts of desired configurations: ------
     // 1. CNT on graphene: maximal at AA, minimal at AB.
@@ -107,7 +105,9 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 		normalizationSurfaceN = &surfaceN;
 	}
 	
+	// ---- (I) Placing the tube for easy reach of desired configurations ---------
 
+    Rotate((*normaliztionTube), *normalizationTubeN, 3, (M_PI/6) - teta); // rotation around the z axis (spinning)
 
     // ------------ (III) Calculating RIMax and RIMin ----------------------
 
