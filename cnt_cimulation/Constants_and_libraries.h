@@ -3,8 +3,9 @@
 #define __CONSTANTS_AND_LIBRARIES__
 
 //*************** Flags **********************
-#define USE_GAUSSIAN_INTERSECTION 1 // 1 if gaussian intersection, 0 for hard sphere.
-#define USE_GLOBAL_ZONE 1
+#define USE_GAUSSIAN_INTERSECTION 1 // 1 gaussian intersection, 0 for hard sphere.
+#define USE_GLOBAL_ZONE 1			// 1 use a global zone, 0 use individual zones
+#define WRITE_ENTIRE_TUBE 0 		// 1 write entire tube to coords, 0 write bottom half
 
 //*************** Constants ******************
 #define NULL	0
