@@ -31,6 +31,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
     double rotationAngleRIMin = 0.0;
     int	   j = 0;
     double effectiveNum = 0;
+    double totalEffectiveNum = 0; // Variable intended to capture the weight of the entire tube for energy normaliation per atom.
 
     *RIMax = 0.0;
     *RIMin = 0.0;
@@ -114,6 +115,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 	for (j = 0; j < *normalizationTubeN; j++)
 	{
 		effectiveNum = exp( EXPNORM * (ILD - (*normaliztionTube)[j].z) / (RND - ILD) ); // find weight of atom
+		totalEffectiveNum = totalEffectiveNum + effectiveNum;
 		if ((*normaliztionTube)[j].z < MAX_HEIGHT)
 		{
 			*RIMax = *RIMax + effectiveNum * FindInteracting((*normaliztionTube)[j], xShiftRIMax, xShiftRIMax,
@@ -141,6 +143,7 @@ void CalculateRIMaxRIMin(double* RIMax, double* RIMin, Atom *surfaceLattice, int
 
 	printf("RIMin:%lf\n", *RIMin);
 	printf("RIMax:%lf\n", *RIMax);
+	printf("totalEffectiveNum:%lf\n", totalEffectiveNum);
 
 	// ------- (IV) Returning the tube to the original location -----------------
 	Rotate((*normaliztionTube), *normalizationTubeN, 3, -((M_PI/6) - teta + rotationAngleRIMin));
