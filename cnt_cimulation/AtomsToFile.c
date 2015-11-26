@@ -29,14 +29,20 @@ void AtomsToFile(Atom *tube, int tubeN, char *destination, double xShift, double
 		desFile = fopen(destination, "w");
 	
 		fprintf(desFile, "0.0 0.0 0.0\n");
+		
 		for (i = 0; i < tubeN; i++) {
-			if (tube[i].z <= MAX_HEIGHT) {
+			if (WRITE_ENTIRE_TUBE) {
 				fprintf(desFile, "%d 0 %lf %lf %lf\n", tube[i].type, tube[i].x + xShift, 
-				tube[i].y + yShift, tube[i].z + zshift);	
+				tube[i].y + yShift, tube[i].z + zshift);
+			}
+			else {
+				if (tube[i].z <= MAX_HEIGHT) {
+					fprintf(desFile, "%d 0 %lf %lf %lf\n", tube[i].type, tube[i].x + xShift, 
+					tube[i].y + yShift, tube[i].z + zshift);
+				}	
 			}
 		}
 	}
-
-			
+	
 	fclose(desFile);
 }
