@@ -2,14 +2,15 @@
 #include "LatticeCreator.h"
 #include "CreateSurface.h"
 #include "Move.h"
+#include "aVecLength.h"
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
-// This function creates the surface and then moves it so the tube 
+// This function creates the surface and then moves it so the tube is always placed at the center.
 
-int CreateSurface(Atom** surfaceLattice, double length, double radius, int latticeType) 
+int CreateSurface(Atom** surfaceLattice, aVec T, int unitcellN, double radius, int latticeType) 
 
 {
 
@@ -17,10 +18,12 @@ int CreateSurface(Atom** surfaceLattice, double length, double radius, int latti
 	double xMax, yMax;
 	double xMod, yMod;
 	int surfaceN;
-	double squareEdge;
+	double squareEdge, length;
+
+	length = aVecLength(T) * unitcellN;
 
 	xMax = 2 * radius + 2 * (INTERACTION_BUFFER + LATTICE_HORIZD);
-	yMax = 1 * length + 2 * (INTERACTION_BUFFER + LATTICE_HIGHT);
+	yMax = 2 * length + 2 * (INTERACTION_BUFFER + LATTICE_HIGHT);
 	squareEdge = MAX(xMax, yMax);
 
 

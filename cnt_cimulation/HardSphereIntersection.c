@@ -1,11 +1,12 @@
 #include "Constants_and_libraries.h"
 #include "HardSphereIntersection.h"
 #include <math.h>
+#include <stdio.h>
 
 double HardSphereIntersection(double radius1, double radius2, double distance)
 {
 	double intersection;
-	
+
 	// Too far:
 	if (distance > radius1 + radius2)
 	{

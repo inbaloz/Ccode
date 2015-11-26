@@ -17,6 +17,7 @@
 #define BN_TUBE_BL_HETERO    1.45			// B-N bond length in Angstroms in a tube in a heterojunction
 #define BN_LATTICE_BL_HOMO	 1.45			// B-N bond length in Angstroms in a lattice in a homojunction
 #define BN_LATTICE_BL_HETERO 1.45			// B-N bond length in Angstroms in a lattice in a heterojunction
+#define BL_NORMALIZATION_HETERO 1.431		// bond length of a hetero system for normalization
 
 #define RCGRAPHENE_HOMO	    (0.5  * GRAPHENE_BL_HOMO)     // Radius of graphene atom (for RI calculations)
 #define RCGRAPHENE_HETERO	(0.5  * GRAPHENE_BL_HETERO)   // Radius of graphene atom (for RI calculations)

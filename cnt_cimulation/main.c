@@ -28,6 +28,7 @@
 #include "SpinningMotion.h"
 #include "SetGlobals.h"
 #include "TwodDataToFile.h"
+#include "TubeCreator.h"
 #include "AtomsToFile.h"
 #include "WriteCoordinates.h"
 #include "GaussianIntersection.h"
@@ -127,16 +128,12 @@ int main(int argc, char *argv[])
 	double* slideValues;	// Slide values				(type 3*, 4*)
 	double slideStep;		// Slide step values		(type 3*, 4*)
 	double totDist;			// the total distance travelled by the tube (type 4)
-	Atom* tubeUnit;			// The tube's unitcell
 	int tubeUnitN;			// Number of atoms in the tube's unitcell
 	double radius;			// The tube's radius
-	double length;			// The tube's length
 	Atom* tube;				// The final tube
 	int tubeN;				// The number of atoms in the tube
-	Atom* lattice;			// The lattice that will be used to create the tube.
 	Atom* surfaceLattice;	// The lattice that will be used to create the surface.
 	int surfaceN;			// The number of atoms in the lattice.
-	int latticeN;			// The number of atoms in the lattice
 	double RIMin;		// The minimum surface
 	double RIMax;		// The maximum surface
 	// double effTubeN;		// The effective number of atoms (normalized by hight)	
@@ -199,43 +196,13 @@ int main(int argc, char *argv[])
 	tubeUnitN = 4 * ( ((Ch.m) * (Ch.m)) + ((Ch.n) * (Ch.n)) + ((Ch.n) * (Ch.m)) ) / gcd(Ch.n, Ch.m);
 	teta = acos( (2 * Ch.n + Ch.m) / (2 * sqrt( (Ch.n * Ch.n) + (Ch.m * Ch.m) + (Ch.n * Ch.m) ) ) );
 	radius = aVecLength(Ch) / (2 * M_PI);
-	length = aVecLength(T) * unitcellN;
 	MAX_HEIGHT = ILD + radius;
 	printf("radius: %lf\n", radius);
 
 //********************** Step 3 - Create the tube and surface ******************************
 
-	// The function needs the future unitcell borders (before rotating and moving)
-	// to create a lattice in a suitable size:
-	{
-	double xMin = - aVecLength(T) * sin( (M_PI / 6) - teta);
-	double xMax = aVecLength(Ch) * cos((M_PI / 6) - teta);
-	double yMin = 0;
-	double yMax = ( aVecLength(Ch) * sin((M_PI / 6) - teta) + aVecLength(T) * cos( (M_PI / 6) - teta));
-	// Creating the lattice (to make a tube of):
-	latticeN = LatticeCreator(&lattice, xMin, yMin, xMax, yMax, tubeType);
-	}
-	// Making the tube's unitcell from the lattice:
-	tubeUnit = CutUnitcell(lattice, latticeN, Ch, T, (M_PI / 6) - teta, tubeUnitN);
-
-	// Duplicating the unitcell:
-	tube = DuplicateTube(tubeUnit, tubeUnitN, unitcellN, aVecLength(T));
-	tubeN = tubeUnitN * unitcellN;
-
-	// cut last part of tube if requested
-	if (percentTruncated != 0.0) {
-		CutLastPartOfTube(tube, &tubeN, percentTruncated);
-	}
-
-	printf("number of atoms: %d\n",tubeN);
-
-	// Free the unit tube, it isn't needed anymore:
-	free(tubeUnit);
-
-	// This lattice was used to create the tube. Now we free it for later reuse:
-	free(lattice);
-	
-	surfaceN = CreateSurface(&surfaceLattice, length, radius, latticeType); // Create the surface
+	tubeN = TubeCreator(T, Ch, teta, tubeType, tubeUnitN, unitcellN, &tube);
+	surfaceN = CreateSurface(&surfaceLattice, T, unitcellN, radius, latticeType); // Create the surface
 
 //********************** Step 4 - Normalizie RI ********************************
 	
@@ -256,7 +223,8 @@ int main(int argc, char *argv[])
 
     // ***************** Assuming the tube is whole.*********************
 	CalculateRIMaxRIMin(&RIMax, &RIMin, surfaceLattice, surfaceN, tube, 
-						tubeN, teta, tubeType, latticeType, rotSpinStart);
+						tubeN, teta, tubeType, latticeType, T, Ch, 
+						tubeUnitN, unitcellN, radius);
 	
 //********************** Step 5 - Calculate RI *********************************
 
@@ -338,6 +306,7 @@ int main(int argc, char *argv[])
 				      surfaceN, xStart, yStart, latticeType, prefix);
 
 		// Printing the RI and x-yValues to a file:
+		printf("RI of fist step:%lf\n", RI[0]);
 		NormRI(RI, amountOfSteps, RIMin, RIMax);
 		TwodDataToFile(slideValues, RI, amountOfSteps, strcat(prefix, "-Sliding_RI"));
 		free(slideValues);
