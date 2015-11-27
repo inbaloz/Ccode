@@ -17,7 +17,6 @@
 #include "Rotate.h"
 #include "RotateShift.h"
 #include "gcd.h"
-#include "LatticeCreator.h"
 #include "LoadInPar.h"
 #include "NormRI.h"
 #include "PerfectRotationMotion.h"
