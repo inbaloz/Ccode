@@ -2,6 +2,7 @@
 #define __LatticeCreator__
 
 #include "Constants_and_libraries.h"
-int LatticeCreator(Atom** lattice, double xMin, double yMin, double xMax, double yMax, int tubeType);
+int LatticeCreator(Atom** lattice, double xMin, double yMin, double xMax, double yMax,
+				   int tubeOrLattice, int tubeType);
 
 #endif
