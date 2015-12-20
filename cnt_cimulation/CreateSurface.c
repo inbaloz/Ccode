@@ -27,7 +27,7 @@ int CreateSurface(Atom** surfaceLattice, aVec T, int unitcellN, double radius, i
 	squareEdge = MAX(xMax, yMax);
 
 
-	surfaceN = LatticeCreator(surfaceLattice, xMin, yMin, squareEdge, squareEdge, latticeType);
+	surfaceN = LatticeCreator(surfaceLattice, xMin, yMin, squareEdge, squareEdge, 1, latticeType);
 	xMod = remainder(-squareEdge/2, LATTICE_HORIZD);
 	yMod = remainder(-squareEdge/2, LATTICE_HIGHT);
 	Move(*surfaceLattice, surfaceN, -squareEdge/2 - xMod, -squareEdge/2 - yMod, 0);
