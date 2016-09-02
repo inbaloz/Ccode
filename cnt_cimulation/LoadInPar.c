@@ -15,6 +15,7 @@ InPar LoadInPar(char prefix[])
 	int i;			// Simply a counter.
 	InPar input;
 
+
 	// default values for backwards compatability
 	input.percentTruncated = 0.0;
 	input.tubeType = 0;
@@ -22,10 +23,9 @@ InPar LoadInPar(char prefix[])
 	// Duplicating the prefix to prevent it from changing:
 	strcpy(destination, prefix);
 	strcat(destination, " - inputData");
-
 	FILE *desFile = fopen(destination, "r");
-
-	res = fgets(line, 100, desFile);
+	fread(line, 100, 1, desFile);
+	// res = fgets(line, 100, desFile);
 	while (res != NULL)
 	{
 		i = 0;

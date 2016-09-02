@@ -192,6 +192,7 @@ int main(int argc, char *argv[])
 
 //********************** Step 2 - Calculate tube parameters ********************
 	T = CalculateTranslational(Ch);
+	printf("translational: %lf\n", aVecLength(T));
 	tubeUnitN = 4 * ( ((Ch.m) * (Ch.m)) + ((Ch.n) * (Ch.n)) + ((Ch.n) * (Ch.m)) ) / gcd(Ch.n, Ch.m);
 	teta = acos( (2 * Ch.n + Ch.m) / (2 * sqrt( (Ch.n * Ch.n) + (Ch.m * Ch.m) + (Ch.n * Ch.m) ) ) );
 	radius = aVecLength(Ch) / (2 * M_PI);
@@ -201,7 +202,9 @@ int main(int argc, char *argv[])
 //********************** Step 3 - Create the tube and surface ******************************
 
 	tubeN = TubeCreator(T, Ch, teta, tubeType, tubeUnitN, unitcellN, &tube);
+	printf("sup1\n");
 	surfaceN = CreateSurface(&surfaceLattice, T, unitcellN, radius, latticeType); // Create the surface
+	printf("sup2\n");
 
 //********************** Step 4 - Normalizie RI ********************************
 	

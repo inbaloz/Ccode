@@ -20,7 +20,6 @@ double CalculateIntersection(Atom atomTube, Atom atomLattice)
 	double d = sqrt(pow(atomTube.x - atomLattice.x, 2) + pow(atomTube.y - atomLattice.y, 2));
 	
 	// ----- setting the radii according to the atoms types (C/B/N) -----
-
 	r1 = SetRadius(atomTube.type);
 	r2 = SetRadius(atomLattice.type);
 	gaussianAmplitude1 = SetAmplitude(atomTube.type);

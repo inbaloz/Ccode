@@ -27,13 +27,17 @@ int TubeCreator(aVec T, aVec Ch, double teta, int tubeType, int tubeUnitN,
 
 
 	// Creating the lattice (to make a tube of):
+	printf("creating lattice..\n");
 	latticeN = LatticeCreator(&lattice, xMin, yMin, xMax, yMax, 0, tubeType);
 	}
+	printf("cutting unitcell..\n");
 	// Making the tube's unitcell from the lattice:
 	tubeUnit = CutUnitcell(lattice, latticeN, Ch, T, (M_PI / 6) - teta, tubeUnitN);
 
 	// Duplicating the unitcell:
+	printf("duplicating tube..\n");
 	*tube = DuplicateTube(tubeUnit, tubeUnitN, unitcellN, aVecLength(T));
+	printf("done.\n");
 	tubeN = tubeUnitN * unitcellN;
 
 	// cut last part of tube if requested

@@ -22,8 +22,8 @@ int CreateSurface(Atom** surfaceLattice, aVec T, int unitcellN, double radius, i
 
 	length = aVecLength(T) * unitcellN;
 
-	xMax = 2 * radius + 2 * (INTERACTION_BUFFER + LATTICE_HORIZD);
-	yMax = 2 * length + 2 * (INTERACTION_BUFFER + LATTICE_HIGHT);
+	xMax =  0.6 * radius + 2 * (INTERACTION_BUFFER + LATTICE_HORIZD);
+	yMax =  1.25 * length + 2 * (INTERACTION_BUFFER + LATTICE_HIGHT);
 	squareEdge = MAX(xMax, yMax);
 
 

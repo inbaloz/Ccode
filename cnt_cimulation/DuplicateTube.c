@@ -1,6 +1,7 @@
 #include "Constants_and_libraries.h"
 #include "DuplicateTube.h"
 #include "Move.h"
+#include <stdio.h>
 #include <malloc.h>
 
 // input: a centered tube unitcell, amount of atoms, amount of duplications,
@@ -10,6 +11,8 @@ Atom * DuplicateTube(Atom* tubeUnit, int tubeUnitN, int duplicateN, double tubeL
 {
 	int i, j;	// counters.
 	Atom* tubeDuplicated = malloc(tubeUnitN * duplicateN * sizeof(Atom));
+	printf("done allocating\n");
+
 	for (i = 0; i < duplicateN; i++)
 	{
 		for (j = 0; j < tubeUnitN; j++)
@@ -22,6 +25,7 @@ Atom * DuplicateTube(Atom* tubeUnit, int tubeUnitN, int duplicateN, double tubeL
 			tubeDuplicated[(i * tubeUnitN) + j].y = tubeUnit[j].y + (tubeLength * i);
 		}
 	}
+	printf("moving tube\n");
 	// The new tube isn't centered, the (0,0,0) point is only in the middle
 	// of the first unitcell. Therefore, lets move it:
 	Move(tubeDuplicated, tubeUnitN * duplicateN, 0, - ((duplicateN - 1) * tubeLength) / 2.0, 0);

@@ -5,7 +5,7 @@
 //*************** Flags **********************
 #define USE_GAUSSIAN_INTERSECTION 1 // 1 gaussian intersection, 0 for hard sphere.
 #define USE_GLOBAL_ZONE 1			// 1 use a global zone, 0 use individual zones
-#define WRITE_ENTIRE_TUBE 0 		// 1 write entire tube to coords, 0 write bottom half
+#define WRITE_ENTIRE_TUBE 1 		// 1 write entire tube to coords, 0 write bottom half
 
 //*************** Constants ******************
 #define NULL	0
@@ -83,7 +83,7 @@
 #define	SIZE_GLOBAL_ZONE   130
 
 //*************** interlayer potential (Itai and Oded's code) *********
-#define INTERACTION_BUFFER 18 // in [Angstrom]. Note: The maximal interaction distance 
+#define INTERACTION_BUFFER 4 // in [Angstrom]. Note: The maximal interaction distance 
 							 //in Itai's code is 16 [A], I added a buffer.
 
 //*************** Structures *****************
@@ -137,6 +137,9 @@ extern double RBTUBE;
 extern double RBLATTICE;
 extern double RNTUBE;
 extern double RNLATTICE;
+extern int TUBETYPE;
+extern int LATTICETYPE;
+
 
 extern Atom ZONE_1[SIZE_ZONE_1];
 extern Atom ZONE_2[SIZE_ZONE_2];
